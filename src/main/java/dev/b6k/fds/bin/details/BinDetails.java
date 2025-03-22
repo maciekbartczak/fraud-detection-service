@@ -25,11 +25,11 @@ public record BinDetails(
         DEBIT,
         CREDIT,
         PREPAID,
-        NONE;
+        NONE
     }
 
     public enum ConsumerType {
         CONSUMER,
-        CORPORATE;
+        CORPORATE
     }
 }

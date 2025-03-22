@@ -1,6 +1,7 @@
 package dev.b6k.fds.bin.integration.mastercard;
 
 import dev.b6k.fds.bin.Bin;
+import dev.b6k.fds.bin.BinNotFoundException;
 import dev.b6k.fds.bin.details.BinDetails;
 import dev.b6k.fds.bin.details.BinDetailsProvider;
 import dev.b6k.fds.integration.mastercard.bin.api.ApiException;
@@ -48,7 +49,7 @@ class MastercardBinDetailsProvider implements BinDetailsProvider {
                         .consumerType(mapConsumerType(it.getConsumerType()))
                         .localUse(it.getLocalUse())
                         .build())
-                .orElseThrow();
+                .orElseThrow(() -> new BinNotFoundException("Bin not found in Mastercard API"));
     }
 
     private BinDetails.ConsumerType mapConsumerType(String consumerType) {
