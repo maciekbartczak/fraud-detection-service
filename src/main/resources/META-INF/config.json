@@ -7,5 +7,6 @@
   "useBeanValidation": true,
   "interfaceOnly": true,
   "java17" : true,
+  "generateBuilders": true,
   "useSwaggerAnnotations": false
 }
