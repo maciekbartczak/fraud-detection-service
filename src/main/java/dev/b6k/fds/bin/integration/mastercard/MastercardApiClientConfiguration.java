@@ -16,7 +16,7 @@ import java.security.PrivateKey;
 @RequiredArgsConstructor
 @IfBuildProperty(name = "fds.integration.mastercard.bin.enabled", stringValue = "true")
 class MastercardApiClientConfiguration {
-    private final MastercardBinApiAuthorizationFilter mastercardBinApiAuthorizationFilter;
+    private final MastercardBinApiAuthorizationFilter authorizationFilter;
 
     @ConfigProperty(name = "fds.integration.mastercard.bin.base-url")
     String baseUrl;
@@ -31,7 +31,7 @@ class MastercardApiClientConfiguration {
     BinLookupApi binLookupApi() {
         return RestClientBuilder.newBuilder()
                 .baseUri(URI.create(baseUrl))
-                .register(mastercardBinApiAuthorizationFilter)
+                .register(authorizationFilter)
                 .build(BinLookupApi.class);
     }
 

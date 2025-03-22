@@ -3,7 +3,9 @@ package dev.b6k.fds.bin.delivery;
 import dev.b6k.fds.bin.details.BinDetails;
 import dev.b6k.fds.model.GetBinDetailsResponse;
 import dev.b6k.fds.model.GetBinDetailsResponseCountry;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 class BinHttpEndpointHelper {
     public static GetBinDetailsResponse makeGetBinDetailsResponse(BinDetails details) {
         return GetBinDetailsResponse.builder()
