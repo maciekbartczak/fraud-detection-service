@@ -28,33 +28,36 @@ paths:
     get:
       tags:
         - bin
-      operationId: getBINDetails
+      operationId: getBinDetails
       parameters:
         - name: binNumber
           in: path
           required: true
           schema:
-            type: string
+            type: number
+            minimum: 100000
+            maximum: 99999999999
+            example: 966741047
           description: The Bank Identification Number
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetBINDetailsResponse'
+                $ref: '#/components/schemas/GetBinDetailsResponse'
           description: BIN data was returned successfully
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid BIN format
         '404':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: The requested BIN was not found
-        '422':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: Invalid BIN format
 
 components:
   schemas:
@@ -88,7 +91,7 @@ components:
               factorDescription:
                 type: string
 
-    GetBINDetailsResponse:
+    GetBinDetailsResponse:
       type: object
       properties:
         bin:

@@ -1,30 +1,25 @@
 package dev.b6k.fds.bin;
 
 import dev.b6k.fds.bin.details.BinDetailsProvider;
-import dev.b6k.fds.model.GetBINDetailsResponse;
+import dev.b6k.fds.model.GetBinDetailsResponse;
 import dev.b6k.fds.rest.BinApi;
-import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
+
+import java.math.BigDecimal;
 
 @RequiredArgsConstructor
 class BinHttpEndpoint implements BinApi {
     private final BinDetailsProvider binDetailsProvider;
 
     @Override
-    public GetBINDetailsResponse getBINDetails(String binNumber) {
-        validateBinNumber(binNumber);
+    public GetBinDetailsResponse getBinDetails(BigDecimal binNumber) {
+        var bin = new Bin(binNumber);
 
-        var details = binDetailsProvider.getBINDetails(binNumber);
-        var response = new GetBINDetailsResponse();
-        response.setBin(binNumber);
+        var details = binDetailsProvider.getBinDetails(bin);
+        var response = new GetBinDetailsResponse();
+        response.setBin(bin.value().toString());
         response.setCountry("Poland");
 
         return response;
-    }
-
-    private void validateBinNumber(String binNumber) {
-        if (binNumber == null || !binNumber.matches("^\\d{6,8}$")) {
-            throw new ValidationException("BIN must be between 6 and 8 digits");
-        }
     }
 }

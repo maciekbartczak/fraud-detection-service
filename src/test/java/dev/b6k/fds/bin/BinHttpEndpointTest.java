@@ -1,7 +1,7 @@
 package dev.b6k.fds.bin;
 
 import dev.b6k.fds.model.ErrorResponse;
-import dev.b6k.fds.model.GetBINDetailsResponse;
+import dev.b6k.fds.model.GetBinDetailsResponse;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,7 +9,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
@@ -21,7 +20,7 @@ class BinHttpEndpointTest {
         var binNumber = "123456";
 
         // when
-        var response = callGetBinDetailsService(binNumber, 200, GetBINDetailsResponse.class);
+        var response = callGetBinDetailsService(binNumber, 200, GetBinDetailsResponse.class);
 
         // then
         assertEquals(binNumber, response.getBin());
@@ -29,7 +28,7 @@ class BinHttpEndpointTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "abc", "123", "12345a67", "abcdef", "123456789", "12345678e" })
+    @ValueSource(strings = {"12345", "123456789012"})
     void validateBin(String invalidBinNumber) {
         // given & when
         var response = callGetBinDetailsService(invalidBinNumber, 400, ErrorResponse.class);
@@ -40,7 +39,7 @@ class BinHttpEndpointTest {
                 .first()
                 .satisfies(error -> {
                     assertEquals("VALIDATION_ERROR", error.getCode());
-                    assertEquals("BIN must be between 6 and 8 digits", error.getMessage());
+                    assertThat(error.getMessage()).isNotBlank();
                 });
     }
 

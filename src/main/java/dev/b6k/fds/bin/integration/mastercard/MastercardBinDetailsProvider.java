@@ -1,5 +1,6 @@
 package dev.b6k.fds.bin.integration.mastercard;
 
+import dev.b6k.fds.bin.Bin;
 import dev.b6k.fds.bin.details.BinDetails;
 import dev.b6k.fds.bin.details.BinDetailsProvider;
 import dev.b6k.fds.integration.mastercard.bin.api.ApiException;
@@ -10,8 +11,6 @@ import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.RequiredArgsConstructor;
 
-import java.math.BigDecimal;
-
 @ApplicationScoped
 @RequiredArgsConstructor
 @IfBuildProperty(name = "fds.integration.mastercard.bin.enabled", stringValue = "true")
@@ -19,9 +18,9 @@ class MastercardBinDetailsProvider implements BinDetailsProvider {
     private final BinLookupApi client;
 
     @Override
-    public BinDetails getBINDetails(String bin) {
+    public BinDetails getBinDetails(Bin bin) {
         var searchByAccountRange = new SearchByAccountRange();
-        searchByAccountRange.accountRange(new BigDecimal(bin));
+        searchByAccountRange.accountRange(bin.value());
 
         try {
             var response = client.searchByAccountRangeResources(searchByAccountRange);
