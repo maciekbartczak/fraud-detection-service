@@ -1,11 +1,15 @@
 package dev.b6k.fds.bin;
 
+import dev.b6k.fds.model.GetBINDetailsResponse;
 import dev.b6k.fds.rest.BinApi;
-import jakarta.ws.rs.core.Response;
 
 public class BinHttpEndpoint implements BinApi {
     @Override
-    public Response getBINDetails(String binNumber) {
-        return Response.ok("Example response").build();
+    public GetBINDetailsResponse getBINDetails(String binNumber) {
+        var response = new GetBINDetailsResponse();
+        response.setBin(binNumber);
+        response.setCountry("Poland");
+
+        return response;
     }
 }

@@ -6,5 +6,6 @@
   "useJakartaEe": true,
   "useBeanValidation": true,
   "interfaceOnly": true,
-  "java17" : true
+  "java17" : true,
+  "useSwaggerAnnotations": false
 }

@@ -39,7 +39,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RiskAssessmentResponse'
+                $ref: '#/components/schemas/GetBINDetailsResponse'
           description: BIN data returned successfully
 
 
@@ -74,3 +74,11 @@ components:
                 type: string
               factorDescription:
                 type: string
+
+    GetBINDetailsResponse:
+      type: object
+      properties:
+        bin:
+          type: string
+        country:
+          type: string

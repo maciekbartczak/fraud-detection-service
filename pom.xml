@@ -160,13 +160,12 @@
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/META-INF/openapi.yaml</inputSpec>
                             <generatorName>jaxrs-spec</generatorName>
-                            <additionalProperties>interfaceOnly=true,useSwaggerAnnotations=false,returnResponse=true
-                            </additionalProperties>
                             <configOptions>
                                 <library>quarkus</library>
                                 <sourceFolder>src/gen/java/main</sourceFolder>
                             </configOptions>
-                            <configurationFile>${project.basedir}/src/main/resources/META-INF/config.json
+                            <configurationFile>
+                                ${project.basedir}/src/main/resources/META-INF/config.json
                             </configurationFile>
                         </configuration>
                     </execution>
