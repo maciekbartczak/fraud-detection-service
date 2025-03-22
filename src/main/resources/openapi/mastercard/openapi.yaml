@@ -1,0 +1,670 @@
+openapi: 3.0.3
+info:
+  title: Bank Identification Number Lookup API
+  description: |
+    BIN Lookup API
+
+    Customers can retrieve account range information in an easy to access API that powers automated integrations without depending on acquiring partners.
+    The API enables multiple use cases including; payment routing decisioning, improved decline logic, benefits validation, and issuer/product identification.
+    Customers of the API also benefit from daily updates, which ensures their BIN information is always in sync with the latest updates.
+
+    Customers can perform the following operations:
+      - Fetch paginated list of BIN based account ranges
+      - Perform search based on fields
+      - Perform search based on account range
+
+  contact:
+    name: API Support
+    url: 'https://developer.mastercard.com/support'
+    email: apisupport@mastercard.com
+  version: ' 1.1.3'
+servers:
+  - url: 'https://api.mastercard.com/bin-resources'
+    description: Production
+  - url: 'https://sandbox.api.mastercard.com/bin-resources'
+    description: Sandbox
+tags:
+  - name: BIN Lookup
+    description: BIN Lookup API
+paths:
+  /bin-ranges:
+    post:
+      summary: Get BIN Account Ranges
+      description: Retrieve a list of all account range information or filtered results based on search criteria applied
+      tags:
+        - BIN Lookup
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+        - $ref: '#/components/parameters/Sort'
+      requestBody:
+        $ref: '#/components/requestBodies/BinResourceSearchRequest'
+      operationId: get-bin-resources
+      responses:
+        '200':
+          $ref: '#/components/responses/BinResourceResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/NotAuthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/ForbiddenErrorResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundErrorResponse'
+
+  /bin-ranges/account-searches:
+    post:
+      tags:
+        - BIN Lookup
+      summary: Search by 6 - 8 Digit BINs, or up to the 11th digit of an account range
+      description: Find a specific account range by providing an 8 digit BIN, or up to 11 digits of an account range
+      requestBody:
+        $ref: '#/components/requestBodies/BinResourceSearchByAccountRangeRequest'
+      operationId: search-by-account-range-resources
+      responses:
+        '200':
+          $ref: '#/components/responses/AccountRangeSearchResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        '401':
+          $ref: '#/components/responses/NotAuthorizedErrorResponse'
+        '403':
+          $ref: '#/components/responses/ForbiddenErrorResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundErrorResponse'
+components:
+  parameters:
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+      description: The current page based on the number of items per page. Use this value to iterate through all of the paginated data and to know when you are the end of the data.
+      example: 1
+      required: false
+    Size:
+      name: size
+      in: query
+      schema:
+        type: integer
+      description: The number of items to be displayed per page. The larger the number the slower the API will respond, but the less requests you will need to make for paginating through data. We recommend trying a page size of 1000 and adjusting for your needs.
+      example: 25
+      required: false
+    Sort:
+      name: sort
+      in: query
+      schema:
+        type: string
+      description: Sort by any parameter that the API returns with a direction (- for descending sort, + for ascending sort). For example -lowAccountRange will present the returned data in descending order based on the low account range values. The same is true for any of parameters such as customerName (+customerName) or ica (-ica).
+      example: -lowAccountRange
+      required: false
+  requestBodies:
+    BinResourceSearchRequest:
+      description: BIN Resource Search Request
+      required: true
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/SearchCriteria'
+    BinResourceSearchByAccountRangeRequest:
+      description: BIN Resource Search By account range Request
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SearchByAccountRange'
+  responses:
+    BinResourceResponse:
+      description: BIN Resource response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BinResourcePage'
+          examples:
+            FilterBINsExample:
+              $ref: '#/components/examples/SearchBINsExample'
+    AccountRangeSearchResponse:
+      description: Account Range Search response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BinResourceArray'
+          examples:
+            BINSuccessExample:
+              $ref: '#/components/examples/BINSuccessExample'
+    NotFoundErrorResponse:
+      description: The URI didn't match an existing resource
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            BINNotFoundExample:
+              $ref: '#/components/examples/BINNotFoundExample'
+    BadRequestErrorResponse:
+      description: Invalid or insufficient parameters supplied
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            BINNotFoundExample:
+              $ref: '#/components/examples/BadRequestExample'
+    NotAuthorizedErrorResponse:
+      description: Authentication information was missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            BINNotFoundExample:
+              $ref: '#/components/examples/UnauthorizedExample'
+    ForbiddenErrorResponse:
+      description: Insufficient permissions for interacting with the resource
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            BINNotFoundExample:
+              $ref: '#/components/examples/ForbiddenExample'
+  schemas:
+    BinResourcePage:
+      type: object
+      properties:
+        currentPageNumber:
+          description: current page indicator
+          type: integer
+          minimum: 1
+          maximum: 100000000
+          example: 10
+        currentPageSize:
+          description: total elements in current page
+          type: integer
+          minimum: 1
+          maximum: 100000000
+          example: 5000
+        totalPages:
+          description: total pages available with size of page
+          type: integer
+          minimum: 1
+          maximum: 100000000
+          example: 5000
+        totalItems:
+          description: total elements in the database
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 100000000
+          example: 6000
+        items:
+          description: The items
+          type: array
+          items:
+            $ref: '#/components/schemas/BinResource'
+    BinResourceArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/BinResource'
+    BinResource:
+      type: object
+      properties:
+        lowAccountRange:
+          type: integer
+          description: The lowest possible account number that would be identified within this authorization account range.
+          minimum: 1111111111111111111
+          maximum: 9999999999999999999
+          example: 5132625400000000000
+        highAccountRange:
+          type: integer
+          description: The highest possible account number that would be identified within this authorization account range.
+          minimum: 1111111111111111111
+          maximum: 9999999999999999999
+          example: 5132625500000000000
+        binNum:
+          type: string
+          description: >-
+            The RAW BIN assigned to the issuer. Can be the value UNAVAILABLE when the BIN of the account range has not been provdied.
+          minLength: 6
+          maxLength: 11
+          example: '222899'
+        binLength:
+          type: integer
+          description: The length of the BIN, will be either 6 or 8 (or 0 when the binNumber is unknown)
+          minimum: 0
+          maximum: 8
+          example: 6
+        acceptanceBrand:
+          type: string
+          description: >-
+            Mastercard or other proprietary service mark.
+            Valid values:
+            â€¢ MCC (MastercardÂ®)
+            â€¢ DMC (Debit MastercardÂ®)
+            â€¢ M (MaestroÂ®)
+            â€¢ CIR (CirrusÂ®)
+            â€¢ PVL (Private Label)
+          minLength: 1
+          maxLength: 3
+          example: MCC
+        ica:
+          type: string
+          description: Mastercard ICA number associated with this authorization account range in right justified, leading zeros format.
+          minLength: 1
+          maxLength: 11
+          example: '1111'
+        customerName:
+          type: string
+          description: The issuer name.
+          minLength: 0
+          maxLength: 300
+          example: FISERV SOLUTIONS
+        country:
+          description: Country of origin for the issuer of the account range. Valuable in e-commerce fraud management to help detect inconsistencies between the IP address of the originating purchase and the cardholder billing address that may warrant additional analysis. When used in conjunction with the Local Use flag, a merchant can identify when a card is being used outside of its intended allowed area of use.
+          type: object
+          properties:
+            code:
+              type: string
+              description: Licensed Country Code of the account range in ISO code format
+              example: 280
+              minLength: 3
+              maxLength: 3
+            alpha3:
+              type: string
+              description: Licensed Country Code of the account range in Alpha-3 format
+              example: USA
+              minLength: 3
+              maxLength: 3
+            name:
+              description: Licensed Country name of the account range in a human readable format
+              example: 'United States of America'
+              type: string
+              minLength: 1
+              maxLength: 200
+        localUse:
+          type: boolean
+          description: >-
+            Indicates whether cards within the authorization account range may be used outside of the country of issuance.
+            true = The range is intended for domestic use only.
+            false = The range is intended for use outside the country of issuance.
+          example: true
+        authorizationOnly:
+          type: boolean
+          description: >-
+            Indicates account range is only valid for authorization processing.
+            true = Authorization only.
+            false = Authorization and Clearing.
+            Authorization only account ranges are used for promotional contexts in merchants such as branded rewards cards.
+          example: true
+        productCode:
+          type: string
+          description: The Brand Product Code associated with the account range.
+          minLength: 1
+          maxLength: 3
+          example: MPM
+        productDescription:
+          type: string
+          description: The description of the Brand Product Code named above.
+          minLength: 1
+          maxLength: 200
+          example: MASTERCARD PREPAID CONSUMER INCENTIVE
+        governmentRange:
+          type: boolean
+          description: Identifies if an account range product is a government product.
+          example: true
+        nonReloadableIndicator:
+          type: boolean
+          description: >-
+            Indicates whether the account range is registered as a non-reloadable prepaid card program. Valid values:
+            true = non-reloadable prepaid program
+            false = reloadable prepaid program or non-prepaid program
+          example: false
+        anonymousPrepaidIndicator:
+          type: string
+          description: >-
+            Valid values:
+              A = Anonymous prepaid program and not AMLDS compliant
+              E = Anonymous prepaid program and AMLDS compliant
+              N = Not prepaid or non-anonymous prepaid program/default
+              U = Unknown
+          minLength: 1
+          maxLength: 1
+          pattern: ^[A|E|N|U]{1}$
+          example: A
+        cardholderCurrencyIndicator:
+          type: string
+          description: >-
+            Indicates whether a card is eligible for Dynamic Currency Conversion (DCC) at the point of sale or not. This indicator helps address DCC issues for Travel Prepaid Cards, other "foreign currency cards" (e.g. a Swiss bank that issues cards in Euros), and Commercial Cards (where the "cardholder" is a corporation and has a travel policy against accepting DCC and the resulting fees).
+            Valid values:
+              C = Do not provide POI currency conversion (or DCC) â€“ corporate client opt-out
+              D = POI currency conversion (or DCC) is permissible for account range per Mastercard Rules
+              T = Do not provide POI currency conversion (or DCC) per Mastercard Rules â€“ travel cards or multi-currency accounts
+              U = Not a Mastercard- branded account range
+          minLength: 1
+          maxLength: 1
+          example: C
+        billingCurrencyDefault:
+          type: string
+          description: The default currency of the cards in this range in ISO 4217 alphabetic format.
+          minLength: 3
+          maxLength: 3
+          example: USD
+        programName:
+          type: string
+          description: >-
+            The program name of the affiliate using a BIN within the Issuer Sponsor's account range. This will be the name a customer sees on their card but the Account is actually owner by the Issuer, as shared in the customerName value. Data for this element is only available for prepaid BINs within the healthcare sector and will be null for the majority of account ranges.
+          minLength: 1
+          maxLength: 200
+          example: Alegues
+        vertical:
+          type: string
+          description: >-
+            The vertical of a prepaid cards in the healthcare sector BIN such as CONSUMER, COMMERCIAL, PUBLIC SECTOR, HEALTHCARE. Data for this element is only available for prepaid BINs within the healthcare sector and will be null for the majority of account ranges.
+          minLength: 1
+          maxLength: 70
+          example: HEALTHCARE
+        fundingSource:
+          type: string
+          description: >-
+            The funding source of the cards in this range. It can be any one of the following three values; CREDIT, DEBIT, PREPAID
+          minLength: 5
+          maxLength: 7
+          example: CREDIT
+        consumerType:
+          type: string
+          description: >-
+            The type of customer the cards in this range are targeted at, can be either CONSUMER or CORPORATE. Unlike the vertical parameter, this data is available for all ranges.
+          minLength: 1
+          maxLength: 9
+          example: 'CONSUMER'
+        smartDataEnabled:
+          type: boolean
+          description: >-
+            Indicates if the issuer has enrolled this account range in Mastercard's Smart Data program. Smart Data provides enriched information about transactions provided by issuers and merchants. If true it means you can connect with the Smart Data team to collect additional insights about transactions within this account range.
+          example: false
+        affiliate:
+          type: string
+          description: >-
+            When populated this is the name of the issuer on the card. In instances where the BIN is a sponsored BIN the affiliate will be the name of the issuing institution. When this has a value you should use this otherwise pull the customerName value.
+          minLength: 1
+          maxLength: 300
+          example: 'California Community Bank'
+        credentialStatus:
+          type: string
+          description: >-
+            Indicates the status of the range
+          minLength: 1
+          maxLength: 1
+          example: 'A'
+        comboCardIndicator:
+          type: string
+          description: >-
+            Indicates whether a card is a combo card or not
+            Valid values:
+              Y = Combo card
+              N = Not a combo card
+          minLength: 1
+          maxLength: 1
+          example: Y
+        flexCardIndicator:
+          type: string
+          description: >-
+            Indicates whether a card is a flex card or not
+            Valid values:
+              Y = Flex card
+              N = Not a Flex card
+          minLength: 1
+          maxLength: 1
+          example: N
+        paymentAccountType:
+          type: string
+          description: >-
+            Indicates whether a card is of type token or PAN
+            Valid values:
+              P = PAN
+              T = token
+          minLength: 1
+          maxLength: 1
+          example: P
+        gamblingBlockEnabled:
+          type: boolean
+          description: >-
+            Indicates whether the card is blocked for gambling. true = The range is blocked for gambling. false = The range is allowed for gambling
+          example: false
+    SearchCriteria:
+      type: object
+      required:
+        - key
+        - value
+      properties:
+        key:
+          type: string
+          description: The key within the JSON response that you would like to filter the results on. For example, to search by customer name set this as 'customerName'. You can also filter on almost any other keys in the data such as 'ica', 'country.code', 'country.alpha3', 'country.name', 'productCode', and 'productDescription'. The exception to this is the governmentRange key, which you cannot filter on.
+          minLength: 3
+          maxLength: 25
+          example: customerName
+        value:
+          type: string
+          description: The value of the key that you would like to filter the results on. For example, provide the name of a customer to search with here such as 'CITIBANK EUROPE PUBLIC LIMITED COMPANY' when filtering on the 'customerName' key. When filtering on another key provide an appropriate value, for example 'FRA' when filtering the 'country.alpha3' key.
+          minLength: 1
+          maxLength: 200
+          example: 'CITIBANK EUROPE PUBLIC LIMITED COMPANY'
+    SearchByAccountRange:
+      type: object
+      required:
+        - accountRange
+      properties:
+        accountRange:
+          type: number
+          description: The first 8 digits of a card number (without spaces), or up to the 11th digit of an account range
+          minimum: 10000000
+          maximum: 99999999999
+          example: 22293261
+    ErrorResponse:
+      type: object
+      required:
+        - Errors
+      properties:
+        Errors:
+          type: object
+          required:
+            - Error
+          properties:
+            Error:
+              $ref: '#/components/schemas/Errors'
+    Errors:
+      type: array
+      minItems: 1
+      items:
+        $ref: '#/components/schemas/Error'
+    Error:
+      type: object
+      required:
+        - Source
+        - ReasonCode
+        - Recoverable
+      properties:
+        Source:
+          type: string
+          description: >-
+            The application that generated this error. Possible values = GATEWAY/BIN_RESOURCE_SERVICE
+          example: BIN_RESOURCE_SERVICE
+          minLength: 1
+          maxLength: 50
+        ReasonCode:
+          type: string
+          description: >-
+            A unique constant identifying the error case encountered during
+            transaction processing
+          example: resource.not.found
+          minLength: 1
+          maxLength: 100
+        Description:
+          type: string
+          description: Description of the 'ReasonCode' field with additional details
+          example: The requested resource does not exist
+          minLength: 0
+          maxLength: 500
+        Recoverable:
+          type: boolean
+          description: >-
+            Indicates whether this error will always be returned for this
+            request, or retrying with same value could change the outcome. For
+            example, if the request contains an invalid signature, retrying will
+            never result in a success. However, if the error is related to some
+            unexpected timeout with the service, retrying the call could result
+            in a successful response.
+          example: false
+        Details:
+          type: string
+          description: >-
+            Could be null, present for backwards compatibility or extra
+            information
+          example: The provided search value does not exist
+          minLength: 0
+          maxLength: 500
+  examples:
+    BINNotFoundExample:
+      value:
+        Errors:
+          Error:
+            - Source: BINTABLE_API
+              ReasonCode: NOT_FOUND
+              Description: Invalid BIN format, please ensure there are no spaces used
+              Recoverable: false
+              Details: BIN '131 840' doesn't exist
+    UnauthorizedExample:
+      value:
+        Errors:
+          Error:
+            - Source: BINTABLE_API
+              ReasonCode: UNAUTHORIZED
+              Description: We couldn't recognize you
+              Recoverable: false
+              Details: >-
+                Full authentication is required to access this resource. See
+                also: https://mstr.cd/31YcrTi
+    ForbiddenExample:
+      value:
+        Errors:
+          Error:
+            - Source: BINTABLE_API
+              ReasonCode: PERMISSION_DENIED
+              Description: You don't seem authorized to do that
+              Recoverable: false
+              Details: The resource was processed and can't be updated anymore
+    BINSuccessExample:
+      description: Individual Mastercard BIN data
+      value:
+        - lowAccountRange: 2229326100000000000
+          highAccountRange: 2229326199999999999
+          binNum: '22292931'
+          binLength: 8
+          acceptanceBrand: 'MCC'
+          ica: '00000023460'
+          customerName: 'TRIPLINK INTERNATIONAL CO.,LIMITED'
+          country:
+            code: '372'
+            alpha3: 'IRL'
+            name: 'Ireland'
+          localUse: false
+          authorizationOnly: false
+          productCode: 'MCO'
+          productDescription: 'MASTERCARD CORPORATE'
+          governmentRange: false
+          nonReloadableIndicator: false
+          anonymousPrepaidIndicator: 'N'
+          programName: null
+          vertical: null
+          fundingSource: 'DEBIT'
+          consumerType: 'CONSUMER'
+          cardholderCurrencyIndicator: 'C'
+          billingCurrencyDefault: 'USD'
+          comboCardIndicator: 'N'
+          flexCardIndicator: 'N'
+          smartDataEnabled: false
+          affiliate: "California Community Bank"
+          credentialStatus: 'A'
+          paymentAccountType: 'P'
+          gamblingBlockEnabled: false
+    SearchBINsExample:
+      value:
+        currentPageNumber: 1
+        currentPageSize: 2
+        totalPages: 76
+        totalRecords: 152
+        items:
+          - lowAccountRange: 2229293100000000000
+            highAccountRange: 2229293199999999999
+            binNum: '22292931'
+            binLength: 8
+            acceptanceBrand: 'MCC'
+            ica: '00000023460'
+            customerName: 'TRIPLINK INTERNATIONAL CO.,LIMITED'
+            country:
+              code: '372'
+              alpha3: 'IRL'
+              name: 'Ireland'
+            localUse: false
+            authorizationOnly: false
+            productCode: 'MCO'
+            productDescription: 'MASTERCARD CORPORATE'
+            governmentRange: false
+            nonReloadableIndicator: false
+            anonymousPrepaidIndicator: 'N'
+            cardholderCurrencyIndicator: 'C'
+            billingCurrencyDefault: 'USD'
+            comboCardIndicator: 'N'
+            flexCardIndicator: 'N'
+            programName: 'Optum Health'
+            vertical: 'HEALTHCARE'
+            fundingSource: 'CREDIT'
+            consumerType: 'CORPORATE'
+            smartDataEnabled: false
+            affiliate: "California Community Bank"
+            credentialStatus: 'A'
+            paymentAccountType: 'P'
+            gamblingBlockEnabled: false
+          - lowAccountRange: 2184410000000000000
+            highAccountRange: 2184419999999999999
+            binNum: '218441'
+            binLength: 6
+            acceptanceBrand: 'MSI'
+            ica: '00000002535'
+            customerName: 'CITIBANK N.A.'
+            country:
+              code: '840'
+              alpha3: 'USA'
+              name: 'United States of America'
+            localUse: false
+            authorizationOnly: false
+            productCode: 'MSI'
+            productDescription: 'MAESTRO'
+            governmentRange: false
+            nonReloadableIndicator: false
+            anonymousPrepaidIndicator: 'N'
+            cardholderCurrencyIndicator: 'D'
+            billingCurrencyDefault: 'USD'
+            comboCardIndicator: 'N'
+            flexCardIndicator: 'N'
+            programName: 'Optum Health'
+            vertical: 'HEALTHCARE'
+            fundingSource: 'DEBIT'
+            consumerType: 'CONSUMER'
+            smartDataEnabled: true
+            affiliate: null
+            credentialStatus: 'A'
+            paymentAccountType: 'P'
+            gamblingBlockEnabled: false
+    BadRequestExample:
+      value:
+        Errors:
+          Error:
+            - Source: BINTABLE_API
+              ReasonCode: BAD_REQUEST
+              Description: Not all mandatory parameters are supplied or sent incorrectly.
+              Recoverable: false
+              Details: The value of parameter 'sort' is invalid.

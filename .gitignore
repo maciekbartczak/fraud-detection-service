@@ -35,4 +35,5 @@ release.properties
 # TLS Certificates
 .certs/
 
+*.p12
 task.md

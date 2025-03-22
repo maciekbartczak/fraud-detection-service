@@ -1,0 +1,15 @@
+{
+  "library": "microprofile",
+  "sourceFolder": "src/gen/java/main",
+  "groupId" : "dev.b6k.fds",
+  "invokerPackage" : "dev.b6k.fds.integration.mastercard.bin",
+  "apiPackage" : "dev.b6k.fds.integration.mastercard.bin.api",
+  "modelPackage" : "dev.b6k.fds.integration.mastercard.bin.model",
+  "microprofileRestClientVersion": "3.0",
+  "serializationLibrary": "jackson",
+  "dateLibrary": "java8",
+  "useJakartaEe": true,
+  "interfaceOnly": true,
+  "disableMultipart": true,
+  "generateBuilders": true
+}

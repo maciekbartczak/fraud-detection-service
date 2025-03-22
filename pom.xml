@@ -81,6 +81,17 @@
         </dependency>
 
         <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-client-jackson</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mastercard.developer</groupId>
+            <artifactId>oauth1-signer</artifactId>
+            <version>1.5.3</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.36</version>
@@ -161,24 +172,40 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>6.6.0</version>
+                <version>7.12.0</version>
                 <executions>
                     <execution>
+                        <id>generate-fds-endpoints</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/META-INF/openapi.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/openapi/fds/openapi.yaml</inputSpec>
                             <generatorName>jaxrs-spec</generatorName>
-                            <configOptions>
-                                <library>quarkus</library>
-                                <sourceFolder>src/gen/java/main</sourceFolder>
-                            </configOptions>
                             <configurationFile>
-                                ${project.basedir}/src/main/resources/META-INF/config.json
+                                ${project.basedir}/src/main/resources/openapi/fds/config.json
+                            </configurationFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-mastercard-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/openapi/mastercard/openapi.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <typeMappings>
+                                integer=BigDecimal
+                            </typeMappings>
+                            <configurationFile>
+                                ${project.basedir}/src/main/resources/openapi/mastercard/config.json
                             </configurationFile>
                         </configuration>
                     </execution>
