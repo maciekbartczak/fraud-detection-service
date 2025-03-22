@@ -1,0 +1,76 @@
+openapi: 3.0.3
+info:
+  title: Fraud Detection API
+  description: API for transaction risk assessment
+  version: "1.0"
+
+paths:
+  /api/v1/risk-assessment:
+    post:
+      tags:
+        - risk-assessment
+      operationId: assessTransactionRisk
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RiskAssessmentRequest"
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RiskAssessmentResponse"
+          description: Risk assessment data returned successfully
+  /api/v1/bin/{binNumber}:
+    get:
+      tags:
+        - bin
+      operationId: getBINDetails
+      parameters:
+        - name: binNumber
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RiskAssessmentResponse'
+          description: BIN data returned successfully
+
+
+components:
+  schemas:
+    RiskAssessmentRequest:
+      type: object
+      properties:
+        binNumber:
+          type: string
+        amount:
+          type: object
+          properties:
+            value:
+              type: number
+            currency:
+              type: string
+        location:
+          type: string
+
+    RiskAssessmentResponse:
+      type: object
+      properties:
+        riskScore:
+          type: integer
+        riskFactors:
+          type: array
+          items:
+            type: object
+            properties:
+              factorName:
+                type: string
+              factorDescription:
+                type: string

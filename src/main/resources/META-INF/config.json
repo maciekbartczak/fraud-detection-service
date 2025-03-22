@@ -1,0 +1,10 @@
+{
+  "modelPackage": "dev.b6k.fds.model",
+  "apiPackage": "dev.b6k.fds.rest",
+  "useTags": true,
+  "dateLibrary": "java8",
+  "useJakartaEe": true,
+  "useBeanValidation": true,
+  "interfaceOnly": true,
+  "java17" : true
+}
