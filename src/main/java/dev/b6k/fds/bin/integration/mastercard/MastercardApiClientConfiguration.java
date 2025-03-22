@@ -35,7 +35,6 @@ class MastercardApiClientConfiguration {
                 .build(BinLookupApi.class);
     }
 
-    // TODO: this should not be required in tests.
     @Singleton
     PrivateKey signingKey() {
         try {

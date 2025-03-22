@@ -1,10 +1,13 @@
 package dev.b6k.fds.bin;
 
+import dev.b6k.fds.MockCertificateTestProfile;
 import dev.b6k.fds.WireMockExtension;
 import dev.b6k.fds.model.ErrorResponse;
 import dev.b6k.fds.model.GetBinDetailsResponse;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.TestProfile;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -16,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
 @QuarkusTestResource(WireMockExtension.class)
+@TestProfile(MockCertificateTestProfile.class)
 class BinHttpEndpointTest {
     private static final String BIN_RANGE_RESPONSE_BODY = """
             [
@@ -53,6 +57,11 @@ class BinHttpEndpointTest {
                 "paymentAccountType": "P"
               }
             ]""";
+
+    @BeforeEach
+    void setup() {
+        WireMockExtension.getWireMockServer().resetAll();
+    }
 
     @Test
     void getBinDetails() {
@@ -103,6 +112,34 @@ class BinHttpEndpointTest {
                     assertEquals("NOT_FOUND", error.getCode());
                     assertThat(error.getMessage()).isNotBlank();
                 });
+    }
+
+    @Test
+    void setCorrectAuthorizationHeaderWhenCallingMastercardApi() {
+        // given
+        WireMockExtension.getWireMockServer()
+                .stubFor(post(urlEqualTo("/bin-ranges/account-searches"))
+                        .willReturn(aResponse()
+                                .withStatus(200)
+                                .withHeader("Content-Type", "application/json")
+                                .withBody("[]"))
+                );
+        var binNumber = "123456";
+
+        // when
+        callGetBinDetailsService(binNumber, 404, ErrorResponse.class);
+
+        // then
+        var requests = WireMockExtension.getWireMockServer()
+                .findAll(postRequestedFor(urlEqualTo("/bin-ranges/account-searches")));
+        assertThat(requests).hasSize(1);
+
+        var authHeader = requests.getFirst().getHeader("Authorization");
+        assertThat(authHeader)
+                .isNotNull()
+                .startsWith("OAuth")
+                .contains("oauth_consumer_key=\"mock-api-key\"")
+                .containsPattern("oauth_signature=.*");
     }
 
     @ParameterizedTest

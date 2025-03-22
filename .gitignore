@@ -36,4 +36,5 @@ release.properties
 .certs/
 
 *.p12
+!/src/test/resources/*.p12
 task.md
