@@ -1,4 +1,4 @@
-package dev.b6k.fds.integration.mastercard.bin;
+package dev.b6k.fds.bin.integration.mastercard;
 
 import dev.b6k.fds.bin.details.BinDetails;
 import dev.b6k.fds.bin.details.BinDetailsProvider;
@@ -8,7 +8,6 @@ import dev.b6k.fds.integration.mastercard.bin.model.SearchByAccountRange;
 import io.quarkus.arc.properties.IfBuildProperty;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;

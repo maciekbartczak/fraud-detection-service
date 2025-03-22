@@ -1,4 +1,4 @@
-package dev.b6k.fds.integration.mastercard.bin;
+package dev.b6k.fds.bin.integration.mastercard;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mastercard.developer.oauth.OAuth;

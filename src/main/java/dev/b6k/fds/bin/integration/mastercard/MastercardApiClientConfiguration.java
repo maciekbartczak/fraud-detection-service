@@ -1,4 +1,4 @@
-package dev.b6k.fds.integration.mastercard.bin;
+package dev.b6k.fds.bin.integration.mastercard;
 
 import com.mastercard.developer.utils.AuthenticationUtils;
 import dev.b6k.fds.integration.mastercard.bin.api.BinLookupApi;
@@ -20,6 +20,12 @@ class MastercardApiClientConfiguration {
 
     @ConfigProperty(name = "fds.integration.mastercard.bin.base-url")
     String baseUrl;
+    @ConfigProperty(name = "fds.integration.mastercard.bin.signing-key.path")
+    String keyPath;
+    @ConfigProperty(name = "fds.integration.mastercard.bin.signing-key.alias")
+    String keyAlias;
+    @ConfigProperty(name = "fds.integration.mastercard.bin.signing-key.password")
+    String keyPassword;
 
     @ApplicationScoped
     BinLookupApi binLookupApi() {
@@ -30,11 +36,7 @@ class MastercardApiClientConfiguration {
     }
 
     @Singleton
-    PrivateKey getSigningKey(
-            @ConfigProperty(name = "fds.integration.mastercard.bin.signing-key.path") String keyPath,
-            @ConfigProperty(name = "fds.integration.mastercard.bin.signing-key.alias") String keyAlias,
-            @ConfigProperty(name = "fds.integration.mastercard.bin.signing-key.password") String keyPassword
-    ) {
+    PrivateKey signingKey() {
         try {
             Log.infov("Loading signing key from {0}", keyPath);
             var key = AuthenticationUtils.loadSigningKey(keyPath, keyAlias, keyPassword);
