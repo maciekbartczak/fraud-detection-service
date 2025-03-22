@@ -8,4 +8,8 @@ public record Bin(BigDecimal value) {
             throw new IllegalArgumentException("Bin number cannot be null");
         }
     }
+
+    public static Bin of(String binNumber) {
+        return new Bin(new BigDecimal(binNumber));
+    }
 }

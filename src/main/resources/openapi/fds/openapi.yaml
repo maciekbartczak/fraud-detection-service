@@ -95,9 +95,55 @@ components:
       type: object
       properties:
         bin:
+          type: number
+          description: The Bank Identification Number
+        customerName:
           type: string
+          description: The issuer name
         country:
+          type: object
+          description: Country of origin of the issuer.
+          properties:
+            code:
+              type: string
+              description: The country code in ISO 3166-1 alfa-3 format
+              example: POL
+            name:
+              type: string
+              description: The country name in human readable format
+              example: Poland
+          required:
+            - code
+            - name
+        billingCurrency:
           type: string
+          description: The default currency of the card in ISO 4217 format.
+          example: PLN
+        fundingSource:
+          type: string
+          enum:
+            - DEBIT
+            - CREDIT
+            - PREPAID
+            - NONE
+          description: The funding source of the card.
+        consumerType:
+          type: string
+          enum:
+            - CONSUMER
+            - CORPORATE
+          description: The type of the customer.
+        localUse:
+          type: boolean
+          description: Flag indicating whether the card may be used outside of the country of issuance.
+      required:
+        - bin
+        - customerName
+        - consumerType
+        - billingCurrency
+        - fundingSource
+        - consumerType
+        - localUse
 
     ErrorResponse:
       type: object
