@@ -4,9 +4,12 @@ import dev.b6k.fds.MockCertificateTestProfile;
 import dev.b6k.fds.WireMockExtension;
 import dev.b6k.fds.model.ErrorResponse;
 import dev.b6k.fds.model.GetBinDetailsResponse;
+import io.quarkus.cache.Cache;
+import io.quarkus.cache.CacheName;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,6 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @QuarkusTestResource(WireMockExtension.class)
 @TestProfile(MockCertificateTestProfile.class)
 class BinHttpEndpointTest {
+    @Inject
+    @CacheName("bin-details-cache")
+    Cache binDetailsCache;
+
     private static final String BIN_RANGE_RESPONSE_BODY = """
             [
               {
@@ -60,6 +67,7 @@ class BinHttpEndpointTest {
 
     @BeforeEach
     void setup() {
+        binDetailsCache.invalidateAll().await().indefinitely();
         WireMockExtension.getWireMockServer().resetAll();
     }
 
@@ -140,6 +148,44 @@ class BinHttpEndpointTest {
                 .startsWith("OAuth")
                 .contains("oauth_consumer_key=\"mock-api-key\"")
                 .containsPattern("oauth_signature=.*");
+    }
+
+    @Test
+    void cacheBinDetailsOnSuccessfulResponse() {
+        WireMockExtension.getWireMockServer()
+                .stubFor(post(urlEqualTo("/bin-ranges/account-searches"))
+                        .willReturn(aResponse()
+                                .withStatus(200)
+                                .withHeader("Content-Type", "application/json")
+                                .withBody(BIN_RANGE_RESPONSE_BODY))
+                );
+        var binNumber = "123456";
+
+        // when
+        callGetBinDetailsService(binNumber, 200, GetBinDetailsResponse.class);
+        callGetBinDetailsService(binNumber, 200, GetBinDetailsResponse.class);
+
+        // then
+        WireMockExtension.getWireMockServer().verify(1, postRequestedFor(urlEqualTo("/bin-ranges/account-searches")));
+    }
+
+    @Test
+    void cacheNonExistingBinDetailsResponse() {
+        WireMockExtension.getWireMockServer()
+                .stubFor(post(urlEqualTo("/bin-ranges/account-searches"))
+                        .willReturn(aResponse()
+                                .withStatus(200)
+                                .withHeader("Content-Type", "application/json")
+                                .withBody("[]"))
+                );
+        var binNumber = "123456";
+
+        // when
+        callGetBinDetailsService(binNumber, 404, ErrorResponse.class);
+        callGetBinDetailsService(binNumber, 404, ErrorResponse.class);
+
+        // then
+        WireMockExtension.getWireMockServer().verify(1, postRequestedFor(urlEqualTo("/bin-ranges/account-searches")));
     }
 
     @ParameterizedTest
