@@ -2,26 +2,19 @@ package dev.b6k.fds.bin.integration.mastercard;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mastercard.developer.oauth.OAuth;
-import io.quarkus.arc.properties.IfBuildProperty;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.client.ClientRequestContext;
 import jakarta.ws.rs.client.ClientRequestFilter;
 import lombok.RequiredArgsConstructor;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 
-@ApplicationScoped
 @RequiredArgsConstructor
-@IfBuildProperty(name = "fds.integration.mastercard.bin.enabled", stringValue = "true")
 class MastercardBinApiAuthorizationFilter implements ClientRequestFilter {
     private final ObjectMapper objectMapper;
     private final PrivateKey signingKey;
-
-    @ConfigProperty(name = "fds.integration.mastercard.bin.api-key")
-    String apiKey;
+    private final String apiKey;
 
     @Override
     public void filter(ClientRequestContext requestContext) throws IOException {
