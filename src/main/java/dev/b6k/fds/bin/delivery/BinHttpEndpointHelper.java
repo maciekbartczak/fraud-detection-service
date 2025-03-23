@@ -12,7 +12,7 @@ class BinHttpEndpointHelper {
                 .bin(details.bin().value())
                 .issuerName(details.issuer().name())
                 .issuerCountry(GetBinDetailsResponseIssuerCountry.builder()
-                        .code(details.issuer().country().code())
+                        .code(details.issuer().country().code().value())
                         .name(details.issuer().country().name())
                         .build())
                 .billingCurrency(details.billingCurrency().code())

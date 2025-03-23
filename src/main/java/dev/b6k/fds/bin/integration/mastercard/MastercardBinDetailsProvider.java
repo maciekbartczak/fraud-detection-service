@@ -1,5 +1,7 @@
 package dev.b6k.fds.bin.integration.mastercard;
 
+import dev.b6k.fds.CountryCode;
+import dev.b6k.fds.Currency;
 import dev.b6k.fds.bin.Bin;
 import dev.b6k.fds.bin.details.BinDetails;
 import dev.b6k.fds.bin.details.BinDetailsProvider;
@@ -46,9 +48,9 @@ class MastercardBinDetailsProvider implements BinDetailsProvider {
                 .bin(Bin.of(bin.getBinNum()))
                 .issuer(new BinDetails.Issuer(
                         bin.getCustomerName(),
-                        new BinDetails.Country(bin.getCountry().getAlpha3(), bin.getCountry().getName())
+                        new BinDetails.Country(CountryCode.of(bin.getCountry().getAlpha3()), bin.getCountry().getName())
                 ))
-                .billingCurrency(new BinDetails.Currency(bin.getBillingCurrencyDefault()))
+                .billingCurrency(Currency.of(bin.getBillingCurrencyDefault()))
                 .fundingSource(mapFundingSource(bin.getFundingSource()))
                 .accountHolderType(mapAccountHolderType(bin.getConsumerType()))
                 .domesticUseOnly(bin.getLocalUse())

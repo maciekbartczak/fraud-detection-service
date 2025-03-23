@@ -1,7 +1,8 @@
 package dev.b6k.fds.transaction.riskassessment;
 
+import dev.b6k.fds.CountryCode;
+import dev.b6k.fds.Currency;
 import dev.b6k.fds.bin.Bin;
-import dev.b6k.fds.bin.details.BinDetails;
 import dev.b6k.fds.model.RiskAssessmentRequest;
 import dev.b6k.fds.model.RiskAssessmentResponse;
 import dev.b6k.fds.model.RiskAssessmentResponseRiskFactorsInner;
@@ -20,8 +21,8 @@ class RiskAssessmentHttpEndpoint implements RiskAssessmentApi {
         var transactionDetails = TransactionDetails.builder()
                 .bin(new Bin(request.getBin()))
                 .amount(request.getAmount())
-                .currency(new BinDetails.Currency(request.getCurrency()))
-                .countryCode(request.getLocation().getCountryCode())
+                .currency(Currency.of(request.getCurrency()))
+                .countryCode(CountryCode.of(request.getLocation().getCountryCode()))
                 .build();
 
         var result = riskAssessmentService.assessTransactionRisk(transactionDetails);

@@ -1,5 +1,7 @@
 package dev.b6k.fds.transaction.riskassessment.riskfactor.evaluators;
 
+import dev.b6k.fds.CountryCode;
+import dev.b6k.fds.Currency;
 import dev.b6k.fds.bin.Bin;
 import dev.b6k.fds.bin.details.BinDetails;
 import dev.b6k.fds.transaction.TransactionDetails;
@@ -20,8 +22,8 @@ class AmountBasedRiskFactorEvaluatorTest {
         var transactionDetails = TransactionDetails.builder()
                 .bin(Bin.of("123456"))
                 .amount(new BigDecimal("1500.25"))
-                .currency(BinDetails.Currency.of("PLN"))
-                .countryCode("POL")
+                .currency(Currency.of("PLN"))
+                .countryCode(CountryCode.of("POL"))
                 .build();
         var context = RiskFactorEvaluator.EvaluationContext.builder()
                 .transactionDetails(transactionDetails)
@@ -54,8 +56,8 @@ class AmountBasedRiskFactorEvaluatorTest {
         var transactionDetails = TransactionDetails.builder()
                 .bin(Bin.of("123456"))
                 .amount(new BigDecimal("80.00"))
-                .currency(BinDetails.Currency.of("PLN"))
-                .countryCode("POL")
+                .currency(Currency.of("PLN"))
+                .countryCode(CountryCode.of("POL"))
                 .build();
         var context = RiskFactorEvaluator.EvaluationContext.builder()
                 .transactionDetails(transactionDetails)
@@ -88,8 +90,8 @@ class AmountBasedRiskFactorEvaluatorTest {
         var transactionDetails = TransactionDetails.builder()
                 .bin(Bin.of("123456"))
                 .amount(new BigDecimal("2000.00"))
-                .currency(BinDetails.Currency.of("PLN"))
-                .countryCode("POL")
+                .currency(Currency.of("PLN"))
+                .countryCode(CountryCode.of("POL"))
                 .build();
         var context = RiskFactorEvaluator.EvaluationContext.builder()
                 .transactionDetails(transactionDetails)
@@ -114,8 +116,8 @@ class AmountBasedRiskFactorEvaluatorTest {
         var transactionDetails = TransactionDetails.builder()
                 .bin(Bin.of("123456"))
                 .amount(new BigDecimal("123.56"))
-                .currency(BinDetails.Currency.of("PLN"))
-                .countryCode("POL")
+                .currency(Currency.of("PLN"))
+                .countryCode(CountryCode.of("POL"))
                 .build();
         var context = RiskFactorEvaluator.EvaluationContext.builder()
                 .transactionDetails(transactionDetails)

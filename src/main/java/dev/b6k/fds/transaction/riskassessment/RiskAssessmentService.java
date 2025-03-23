@@ -59,7 +59,7 @@ class RiskAssessmentService {
                 .bin(transaction.bin().value().toString())
                 .amount(transaction.amount())
                 .currency(transaction.currency().code())
-                .countryCode(transaction.countryCode())
+                .countryCode(transaction.countryCode().value())
                 .riskScore(riskScore)
                 .timestamp(dateTimeProvider.now())
                 .build();

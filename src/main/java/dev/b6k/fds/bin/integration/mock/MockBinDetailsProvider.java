@@ -1,5 +1,7 @@
 package dev.b6k.fds.bin.integration.mock;
 
+import dev.b6k.fds.CountryCode;
+import dev.b6k.fds.Currency;
 import dev.b6k.fds.bin.Bin;
 import dev.b6k.fds.bin.details.BinDetails;
 import dev.b6k.fds.bin.details.BinDetailsProvider;
@@ -14,8 +16,8 @@ class MockBinDetailsProvider implements BinDetailsProvider {
         return new Result.Success(
                 BinDetails.builder()
                         .bin(bin)
-                        .issuer(new BinDetails.Issuer("Issuer", new BinDetails.Country("POL", "Poland")))
-                        .billingCurrency(new BinDetails.Currency("PLN"))
+                        .issuer(new BinDetails.Issuer("Issuer", new BinDetails.Country(CountryCode.of("POL"), "Poland")))
+                        .billingCurrency(Currency.of("PLN"))
                         .fundingSource(BinDetails.FundingSource.DEBIT)
                         .accountHolderType(BinDetails.AccountHolderType.CONSUMER)
                         .domesticUseOnly(false)
