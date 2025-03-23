@@ -29,6 +29,7 @@ class BinHttpEndpointTest {
     @CacheName("bin-details-cache")
     Cache binDetailsCache;
 
+    private static final String EMPTY_BIN_RANGE_RESPONSE_BODY = "[]";
     private static final String BIN_RANGE_RESPONSE_BODY = """
             [
               {
@@ -75,20 +76,14 @@ class BinHttpEndpointTest {
     @Test
     void getBinDetails() {
         // given
-        WireMockExtension.getWireMockServer()
-                .stubFor(post(urlEqualTo("/bin-ranges/account-searches"))
-                        .willReturn(aResponse()
-                                .withStatus(200)
-                                .withHeader("Content-Type", "application/json")
-                                .withBody(BIN_RANGE_RESPONSE_BODY))
-                );
-        var binNumber = "123456";
+        var bin = "123456";
+        prepareServiceResponse(bin, BIN_RANGE_RESPONSE_BODY);
 
         // when
-        var response = callGetBinDetailsService(binNumber, 200, GetBinDetailsResponse.class);
+        var response = callGetBinDetailsService(bin, 200, GetBinDetailsResponse.class);
 
         // then
-        assertThat(response.getBin()).isEqualTo(binNumber);
+        assertThat(response.getBin()).isEqualTo(bin);
         assertEquals("DFCC BANK PLC", response.getIssuerName());
         assertEquals("LKA", response.getIssuerCountry().getCode());
         assertEquals("Sri Lanka", response.getIssuerCountry().getName());
@@ -117,14 +112,8 @@ class BinHttpEndpointTest {
     @Test
     void returnErrorResponseWhenGettingNonExistingBinDetails() {
         // given
-        WireMockExtension.getWireMockServer()
-                .stubFor(post(urlEqualTo("/bin-ranges/account-searches"))
-                        .willReturn(aResponse()
-                                .withStatus(200)
-                                .withHeader("Content-Type", "application/json")
-                                .withBody("[]"))
-                );
-        var binNumber = "123456";
+        var binNumber = "654321";
+        prepareServiceResponse(binNumber, "[]");
 
         // when
         var response = callGetBinDetailsService(binNumber, 404, ErrorResponse.class);
@@ -142,14 +131,8 @@ class BinHttpEndpointTest {
     @Test
     void setCorrectAuthorizationHeaderWhenCallingMastercardApi() {
         // given
-        WireMockExtension.getWireMockServer()
-                .stubFor(post(urlEqualTo("/bin-ranges/account-searches"))
-                        .willReturn(aResponse()
-                                .withStatus(200)
-                                .withHeader("Content-Type", "application/json")
-                                .withBody("[]"))
-                );
-        var binNumber = "123456";
+        var binNumber = "654321";
+        prepareServiceResponse(binNumber, EMPTY_BIN_RANGE_RESPONSE_BODY);
 
         // when
         callGetBinDetailsService(binNumber, 404, ErrorResponse.class);
@@ -171,14 +154,9 @@ class BinHttpEndpointTest {
     class BinDetailsCache {
         @Test
         void cacheBinDetailsOnSuccessfulResponse() {
-            WireMockExtension.getWireMockServer()
-                    .stubFor(post(urlEqualTo("/bin-ranges/account-searches"))
-                            .willReturn(aResponse()
-                                    .withStatus(200)
-                                    .withHeader("Content-Type", "application/json")
-                                    .withBody(BIN_RANGE_RESPONSE_BODY))
-                    );
+            // given
             var binNumber = "123456";
+            prepareServiceResponse(binNumber, BIN_RANGE_RESPONSE_BODY);
 
             // when
             callGetBinDetailsService(binNumber, 200, GetBinDetailsResponse.class);
@@ -190,14 +168,9 @@ class BinHttpEndpointTest {
 
         @Test
         void cacheNonExistingBinDetailsResponse() {
-            WireMockExtension.getWireMockServer()
-                    .stubFor(post(urlEqualTo("/bin-ranges/account-searches"))
-                            .willReturn(aResponse()
-                                    .withStatus(200)
-                                    .withHeader("Content-Type", "application/json")
-                                    .withBody("[]"))
-                    );
-            var binNumber = "123456";
+            // given
+            var binNumber = "55555567";
+            prepareServiceResponse(binNumber, EMPTY_BIN_RANGE_RESPONSE_BODY);
 
             // when
             callGetBinDetailsService(binNumber, 404, ErrorResponse.class);
@@ -209,6 +182,7 @@ class BinHttpEndpointTest {
 
         @Test
         void doNotCacheBinDetailsOnErrorResponse() {
+            // given
             WireMockExtension.getWireMockServer()
                     .stubFor(post(urlEqualTo("/bin-ranges/account-searches"))
                             .willReturn(aResponse()
@@ -224,6 +198,18 @@ class BinHttpEndpointTest {
             WireMockExtension.getWireMockServer().verify(2, postRequestedFor(urlEqualTo("/bin-ranges/account-searches")));
         }
     }
+
+    private void prepareServiceResponse(String bin, String responseBody) {
+        WireMockExtension.getWireMockServer()
+                .stubFor(post(urlEqualTo("/bin-ranges/account-searches"))
+                        .withRequestBody(matchingJsonPath("$.accountRange", equalTo(bin)))
+                        .willReturn(aResponse()
+                                .withStatus(200)
+                                .withHeader("Content-Type", "application/json")
+                                .withBody(responseBody))
+                );
+    }
+
 
     private <T> T callGetBinDetailsService(String binNumber, int expectedStatusCode, Class<T> responseClass) {
         return given().pathParam("binNumber", binNumber)
