@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 @UtilityClass
 class TransactionRiskAssessmentHttpEndpointHelper {
+    // TODO: load this from configuration, possibly move to AssessmentService
     private static final int LOW_RISK_THRESHOLD = 30;
     private static final int MEDIUM_RISK_THRESHOLD = 60;
 
