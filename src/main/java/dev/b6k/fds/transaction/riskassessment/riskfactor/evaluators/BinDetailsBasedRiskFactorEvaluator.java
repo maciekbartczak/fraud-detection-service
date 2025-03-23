@@ -8,38 +8,57 @@ import dev.b6k.fds.transaction.TransactionDetails;
 import dev.b6k.fds.transaction.riskassessment.Score;
 import dev.b6k.fds.transaction.riskassessment.riskfactor.RiskFactor;
 import jakarta.enterprise.context.ApplicationScoped;
-import lombok.RequiredArgsConstructor;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
-@RequiredArgsConstructor
 class BinDetailsBasedRiskFactorEvaluator implements RiskFactorEvaluator {
-    private static final RiskFactor.Weight WEIGHT = new RiskFactor.Weight(0.5);
-    private static final int PREPAID_CARD_RISK_SCORE = 25;
-    private static final int FOREIGN_CARD_RISK_SCORE = 50;
-    private static final int HIGH_RISK_COUNTRY_SCORE = 75;
-    private static final Set<CountryCode> HIGH_RISK_COUNTRIES = Set.of("RUS", "BLR", "IRN", "PRK", "CUB", "VEN")
-            .stream()
-            .map(CountryCode::of)
-            .collect(Collectors.toSet());
-
     private final BinDetailsProvider binDetailsProvider;
+    private final RiskFactor.Weight weight;
+    private final Score prepaidCardRiskScore;
+    private final Score foreignCardRiskScore;
+    private final Score highRiskCountryScore;
+    private final Set<CountryCode> highRiskCountries;
+
+    BinDetailsBasedRiskFactorEvaluator(
+            BinDetailsProvider binDetailsProvider,
+            @ConfigProperty(name = "fds.transaction.risk-assessment.bin.weight", defaultValue = "0.5")
+            double weight,
+            @ConfigProperty(name = "fds.transaction.risk-assessment.bin.prepaid-card-risk-score", defaultValue = "25")
+            int prepaidCardRiskScore,
+            @ConfigProperty(name = "fds.transaction.risk-assessment.bin.foreign-card-risk-score", defaultValue = "50")
+            int foreignCardRiskScore,
+            @ConfigProperty(name = "fds.transaction.risk-assessment.bin.high-risk-country-risk-score", defaultValue = "75")
+            int highRiskCountryRiskScore,
+            @ConfigProperty(name = "fds.transaction.risk-assessment.bin.high-risk-countries", defaultValue = "RUS,BLR,IRN,PRK,CUB,VEN")
+            Set<String> highRiskCountries
+    ) {
+        this.binDetailsProvider = binDetailsProvider;
+        this.weight = RiskFactor.Weight.of(weight);
+        this.prepaidCardRiskScore = Score.of(prepaidCardRiskScore);
+        this.foreignCardRiskScore = Score.of(foreignCardRiskScore);
+        this.highRiskCountryScore = Score.of(highRiskCountryRiskScore);
+        this.highRiskCountries = highRiskCountries.stream()
+                .map(CountryCode::of)
+                .collect(Collectors.toSet());
+    }
+
 
     @Override
     public Set<RiskFactor> evaluate(TransactionDetails transaction) {
         var riskFactors = new HashSet<RiskFactor>();
         var binDetails = switch (binDetailsProvider.getBinDetails(transaction.bin())) {
-            case BinDetailsProvider.Result.Success success ->  success.details();
+            case BinDetailsProvider.Result.Success success -> success.details();
             case BinDetailsProvider.Result.NoData noData -> throw new BinNotFoundException(noData.reason());
         };
 
         if (binDetails.fundingSource() == BinDetails.FundingSource.PREPAID) {
             var riskFactor = RiskFactor.builder()
-                    .score(Score.of(PREPAID_CARD_RISK_SCORE))
-                    .weight(WEIGHT)
+                    .score(prepaidCardRiskScore)
+                    .weight(weight)
                     .description(
                             RiskFactor.Description.builder()
                                     .code("PREPAID_CARD")
@@ -53,8 +72,8 @@ class BinDetailsBasedRiskFactorEvaluator implements RiskFactorEvaluator {
         var transactionCountry = transaction.countryCode();
         if (!issuerCountry.equals(transactionCountry)) {
             var riskFactor = RiskFactor.builder()
-                    .score(Score.of(FOREIGN_CARD_RISK_SCORE))
-                    .weight(WEIGHT)
+                    .score(foreignCardRiskScore)
+                    .weight(weight)
                     .description(
                             RiskFactor.Description.builder()
                                     .code("FOREIGN_CARD")
@@ -67,10 +86,10 @@ class BinDetailsBasedRiskFactorEvaluator implements RiskFactorEvaluator {
             riskFactors.add(riskFactor);
         }
 
-        if (HIGH_RISK_COUNTRIES.contains(issuerCountry)) {
+        if (highRiskCountries.contains(issuerCountry)) {
             var riskFactor = RiskFactor.builder()
-                    .score(Score.of(HIGH_RISK_COUNTRY_SCORE))
-                    .weight(WEIGHT)
+                    .score(highRiskCountryScore)
+                    .weight(weight)
                     .description(
                             RiskFactor.Description.builder()
                                     .code("HIGH_RISK_COUNTRY")

@@ -3,22 +3,31 @@ package dev.b6k.fds.transaction.riskassessment.riskfactor.evaluators;
 import dev.b6k.fds.CountryCode;
 import dev.b6k.fds.Currency;
 import dev.b6k.fds.bin.Bin;
-import dev.b6k.fds.bin.details.BinDetails;
 import dev.b6k.fds.transaction.TransactionDetails;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AmountBasedRiskFactorEvaluatorTest {
+    private AmountBasedRiskFactorEvaluator evaluator;
+
+    @BeforeEach
+    void setUp() {
+        evaluator = new AmountBasedRiskFactorEvaluator(
+                0.3,
+                20,
+                10,
+                new BigDecimal("1500.20")
+        );
+    }
 
     @Test
     void addHighTransactionAmountRiskWhenAmountExceedsThreshold() {
         // given
-        var evaluator = new AmountBasedRiskFactorEvaluator();
         var transactionDetails = TransactionDetails.builder()
                 .bin(Bin.of("123456"))
                 .amount(new BigDecimal("1500.25"))
@@ -27,7 +36,7 @@ class AmountBasedRiskFactorEvaluatorTest {
                 .build();
 
         // when
-        var result = evaluator.evaluate(transactionDetails);
+        var result = this.evaluator.evaluate(transactionDetails);
 
         // then
         assertThat(result)
@@ -38,7 +47,7 @@ class AmountBasedRiskFactorEvaluatorTest {
                     assertEquals(0.3, riskFactor.weight().value());
                     assertEquals("HIGH_TRANSACTION_AMOUNT", riskFactor.description().code());
                     assertEquals(
-                            "Transaction amount 1500.25 is higher than threshold 1000.00",
+                            "Transaction amount 1500.25 is higher than threshold 1500.20",
                             riskFactor.description().message()
                     );
                 });
@@ -47,7 +56,6 @@ class AmountBasedRiskFactorEvaluatorTest {
     @Test
     void addRoundAmountRiskWhenAmountExceedsThreshold() {
         // given
-        var evaluator = new AmountBasedRiskFactorEvaluator();
         var transactionDetails = TransactionDetails.builder()
                 .bin(Bin.of("123456"))
                 .amount(new BigDecimal("80.00"))
@@ -56,7 +64,7 @@ class AmountBasedRiskFactorEvaluatorTest {
                 .build();
 
         // when
-        var result = evaluator.evaluate(transactionDetails);
+        var result = this.evaluator.evaluate(transactionDetails);
 
         // then
         assertThat(result)
@@ -76,7 +84,6 @@ class AmountBasedRiskFactorEvaluatorTest {
     @Test
     void addBothRiskFactors() {
         // given
-        var evaluator = new AmountBasedRiskFactorEvaluator();
         var transactionDetails = TransactionDetails.builder()
                 .bin(Bin.of("123456"))
                 .amount(new BigDecimal("2000.00"))
@@ -85,7 +92,7 @@ class AmountBasedRiskFactorEvaluatorTest {
                 .build();
 
         // when
-        var result = evaluator.evaluate(transactionDetails);
+        var result = this.evaluator.evaluate(transactionDetails);
 
         // then
         assertThat(result)
@@ -97,7 +104,6 @@ class AmountBasedRiskFactorEvaluatorTest {
     @Test
     void doNotAddAnyRiskFactor() {
         // given
-        var evaluator = new AmountBasedRiskFactorEvaluator();
         var transactionDetails = TransactionDetails.builder()
                 .bin(Bin.of("123456"))
                 .amount(new BigDecimal("123.56"))
@@ -106,7 +112,7 @@ class AmountBasedRiskFactorEvaluatorTest {
                 .build();
 
         // when
-        var result = evaluator.evaluate(transactionDetails);
+        var result = this.evaluator.evaluate(transactionDetails);
 
         // then
         assertThat(result).isEmpty();

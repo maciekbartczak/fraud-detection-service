@@ -23,6 +23,10 @@ public record RiskFactor(Score score, Weight weight, Description description) {
                 throw new IllegalArgumentException("Weight must be between 0 and 1");
             }
         }
+
+        public static Weight of(double value) {
+            return new Weight(value);
+        }
     }
 
     @Builder

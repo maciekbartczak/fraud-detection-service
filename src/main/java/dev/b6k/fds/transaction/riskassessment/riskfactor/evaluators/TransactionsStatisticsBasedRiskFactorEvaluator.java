@@ -5,21 +5,40 @@ import dev.b6k.fds.transaction.TransactionRepository;
 import dev.b6k.fds.transaction.riskassessment.Score;
 import dev.b6k.fds.transaction.riskassessment.riskfactor.RiskFactor;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
 @ApplicationScoped
-@RequiredArgsConstructor
 class TransactionsStatisticsBasedRiskFactorEvaluator implements RiskFactorEvaluator {
-    private static final RiskFactor.Weight WEIGHT = new RiskFactor.Weight(0.25);
-    private static final int UNUSUAL_AMOUNT_RISK_SCORE = 50;
-    private static final int FIRST_TRANSACTION_RISK_SCORE = 25;
-    private static final BigDecimal UNUSUAL_AMOUNT_MULTIPLIER = new BigDecimal("3.0");
+    private final RiskFactor.Weight weight;
+    private final Score unusualAmountRiskScore;
+    private final Score firstTransactionRiskScore;
+    private final BigDecimal unusualAmountMultiplier;
 
     private final TransactionRepository transactionRepository;
+
+    TransactionsStatisticsBasedRiskFactorEvaluator(
+            TransactionRepository transactionRepository,
+            @ConfigProperty(name = "fds.transaction.risk-assessment.statistics.weight", defaultValue = "0.5")
+            double weight,
+            @ConfigProperty(name = "fds.transaction.risk-assessment.statistics.unusual-amount-risk-score", defaultValue = "50")
+            int unusualAmountRiskScore,
+            @ConfigProperty(name = "fds.transaction.risk-assessment.statistics.first-transaction-risk-score", defaultValue = "25")
+            int firstTransactionRiskScore,
+            @ConfigProperty(name = "fds.transaction.risk-assessment.statistics.unusual-amount-multiplier", defaultValue = "3.0")
+            double unusualAmountMultiplier
+    ) {
+        this.transactionRepository = transactionRepository;
+        this.weight = RiskFactor.Weight.of(weight);
+        this.unusualAmountRiskScore = Score.of(unusualAmountRiskScore);
+        this.firstTransactionRiskScore = Score.of(firstTransactionRiskScore);
+        this.unusualAmountMultiplier = BigDecimal.valueOf(unusualAmountMultiplier);
+    }
 
     @Override
     public Set<RiskFactor> evaluate(TransactionDetails transaction) {
@@ -28,8 +47,8 @@ class TransactionsStatisticsBasedRiskFactorEvaluator implements RiskFactorEvalua
 
         if (pastTransactionsStatistics.totalCount() == 0) {
             riskFactors.add(RiskFactor.builder()
-                    .score(Score.of(FIRST_TRANSACTION_RISK_SCORE))
-                    .weight(WEIGHT)
+                    .score(firstTransactionRiskScore)
+                    .weight(weight)
                     .description(RiskFactor.Description.builder()
                             .code("FIRST_TRANSACTION")
                             .message("First transaction with this card")
@@ -40,17 +59,17 @@ class TransactionsStatisticsBasedRiskFactorEvaluator implements RiskFactorEvalua
             return riskFactors;
         }
 
-        var unusualAmountThreshold = pastTransactionsStatistics.averageAmount().multiply(UNUSUAL_AMOUNT_MULTIPLIER);
+        var unusualAmountThreshold = pastTransactionsStatistics.averageAmount().multiply(unusualAmountMultiplier);
         if (transaction.amount().compareTo(unusualAmountThreshold) > 0) {
             riskFactors.add(RiskFactor.builder()
-                    .score(Score.of(UNUSUAL_AMOUNT_RISK_SCORE))
-                    .weight(WEIGHT)
+                    .score(unusualAmountRiskScore)
+                    .weight(weight)
                     .description(RiskFactor.Description.builder()
                             .code("UNUSUAL_AMOUNT")
                             .message(
                                     String.format("Transaction amount %s is %s times higher than average (%s)",
                                             transaction.amount(),
-                                            UNUSUAL_AMOUNT_MULTIPLIER,
+                                            unusualAmountMultiplier,
                                             pastTransactionsStatistics.averageAmount())
                             )
                             .build()
