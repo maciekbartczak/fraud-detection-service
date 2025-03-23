@@ -14,11 +14,11 @@ import lombok.RequiredArgsConstructor;
 @ApplicationScoped
 @RequiredArgsConstructor
 public class TransactionRiskAssessmentService {
+    private static final int MAX_RISK_SCORE = 100;
+
     private final TransactionRepository transactionRepository;
     private final DateTimeProvider dateTimeProvider;
     private final Instance<RiskFactorEvaluator> riskFactorEvaluators;
-
-    private static final int MAX_RISK_SCORE = 100;
 
     @Transactional
     public TransactionRiskAssessment assessTransactionRisk(TransactionDetails transaction) {
