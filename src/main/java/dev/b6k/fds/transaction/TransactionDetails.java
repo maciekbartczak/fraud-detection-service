@@ -15,5 +15,9 @@ public record TransactionDetails(Bin bin, BigDecimal amount, Currency currency, 
         Objects.requireNonNull(amount, "Amount cannot be null");
         Objects.requireNonNull(currency, "Currency cannot be null");
         Objects.requireNonNull(countryCode, "Country code cannot be null");
+
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Amount must be positive and greater than 0");
+        }
     }
 }

@@ -73,7 +73,7 @@ components:
           description: The Bank Identification Number associated with the transaction
         amount:
           type: number
-          exclusiveMinimum: 0
+          minimum: 0.000001
           example: 100.00
           description: The amount of the transaction
         currency:
