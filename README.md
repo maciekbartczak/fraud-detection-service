@@ -16,6 +16,18 @@ The following values are supported:
 2. Copy the `.env.sample` file into `.env` file and provide correct values (or set the proper environment variables)
 3. Set the `fds.integration.bin.provider` property to `mastercard`
 
+The following BINs can be used to test the Mastercard API:
+- 99875393
+- 29214303
+- 47980829
+- 66757806
+- 855153163
+- 1157111
+- 966741047
+- 225108
+- 932860
+- 777305770
+
 ### Running the application
 1. Run `mvn quarkus:dev`
 2. Swagger is accessible at http://localhost:8080/swagger-ui/
