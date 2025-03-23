@@ -2,6 +2,8 @@ package dev.b6k.fds.transaction.riskassessment.riskfactor.evaluators;
 
 import dev.b6k.fds.transaction.TransactionDetails;
 import dev.b6k.fds.transaction.TransactionRepository;
+import dev.b6k.fds.transaction.TransactionRepository.TransactionStatistics.NoTransactions;
+import dev.b6k.fds.transaction.TransactionRepository.TransactionStatistics.WithTransactions;
 import dev.b6k.fds.transaction.riskassessment.Score;
 import dev.b6k.fds.transaction.riskassessment.riskfactor.RiskFactor;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -40,24 +42,32 @@ class TransactionsStatisticsBasedRiskFactorEvaluator implements RiskFactorEvalua
 
     @Override
     public Set<RiskFactor> evaluate(TransactionDetails transaction) {
-        var riskFactors = new HashSet<RiskFactor>();
         var pastTransactionsStatistics = transactionRepository.getTransactionsStatistics(transaction.bin());
 
-        if (pastTransactionsStatistics.totalCount() == 0) {
-            riskFactors.add(RiskFactor.builder()
-                    .score(firstTransactionRiskScore)
-                    .weight(weight)
-                    .description(RiskFactor.Description.builder()
-                            .code("FIRST_TRANSACTION")
-                            .message("First transaction with this card")
-                            .build()
-                    ).build());
+        return switch (pastTransactionsStatistics) {
+            case NoTransactions noTransactions -> Set.of(makeFirstTransactionRiskFactor(transaction));
+            case WithTransactions withTransactions -> evaluateTransactionStatistics(transaction, withTransactions);
+        };
+    }
 
-            // If this is the first transaction, we won't have any other useful statistics, return early.
-            return riskFactors;
-        }
+    private RiskFactor makeFirstTransactionRiskFactor(TransactionDetails transaction) {
+        return RiskFactor.builder()
+                .score(firstTransactionRiskScore)
+                .weight(weight)
+                .description(RiskFactor.Description.builder()
+                        .code("FIRST_TRANSACTION")
+                        .message("First transaction with this card")
+                        .build()
+                ).build();
+    }
 
-        var unusualAmountThreshold = pastTransactionsStatistics.averageAmount().multiply(unusualAmountMultiplier);
+    private Set<RiskFactor> evaluateTransactionStatistics(
+            TransactionDetails transaction,
+            TransactionRepository.TransactionStatistics.WithTransactions statistics
+    ) {
+        var riskFactors = new HashSet<RiskFactor>();
+
+        var unusualAmountThreshold = statistics.averageAmount().multiply(unusualAmountMultiplier);
         if (transaction.amount().compareTo(unusualAmountThreshold) > 0) {
             riskFactors.add(RiskFactor.builder()
                     .score(unusualAmountRiskScore)
@@ -65,10 +75,9 @@ class TransactionsStatisticsBasedRiskFactorEvaluator implements RiskFactorEvalua
                     .description(RiskFactor.Description.builder()
                             .code("UNUSUAL_AMOUNT")
                             .message(
-                                    String.format("Transaction amount %s is %s times higher than average (%s)",
+                                    String.format("Transaction amount %s is considered higher than average (%s)",
                                             transaction.amount(),
-                                            unusualAmountMultiplier,
-                                            pastTransactionsStatistics.averageAmount())
+                                            statistics.averageAmount())
                             )
                             .build()
                     ).build());

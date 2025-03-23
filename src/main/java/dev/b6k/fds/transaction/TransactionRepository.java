@@ -18,7 +18,11 @@ public class TransactionRepository implements PanacheRepository<TransactionEntit
         var totalCount = ((Number) result[0]);
         var averageAmount = ((Double) result[1]);
 
-        return new TransactionStatistics(
+        if (totalCount.intValue() == 0) {
+            return new TransactionStatistics.NoTransactions();
+        }
+
+        return new TransactionStatistics.WithTransactions(
                 totalCount.intValue(),
                 Optional.ofNullable(averageAmount)
                         .map(it -> BigDecimal.valueOf(it).setScale(2, RoundingMode.HALF_UP))
@@ -26,6 +30,11 @@ public class TransactionRepository implements PanacheRepository<TransactionEntit
         );
     }
 
-    public record TransactionStatistics(int totalCount, BigDecimal averageAmount) {
+    public sealed interface TransactionStatistics {
+        public record NoTransactions() implements TransactionStatistics {
+        }
+
+        public record WithTransactions(int totalCount, BigDecimal averageAmount) implements TransactionStatistics {
+        }
     }
 }
