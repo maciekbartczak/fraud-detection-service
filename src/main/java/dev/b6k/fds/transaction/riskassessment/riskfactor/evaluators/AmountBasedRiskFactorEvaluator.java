@@ -1,5 +1,6 @@
 package dev.b6k.fds.transaction.riskassessment.riskfactor.evaluators;
 
+import dev.b6k.fds.transaction.TransactionDetails;
 import dev.b6k.fds.transaction.riskassessment.Score;
 import dev.b6k.fds.transaction.riskassessment.riskfactor.RiskFactor;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -16,9 +17,9 @@ class AmountBasedRiskFactorEvaluator implements RiskFactorEvaluator {
     public static final int ROUND_AMOUNT_RISK_SCORE = 10;
 
     @Override
-    public Set<RiskFactor> evaluate(EvaluationContext context) {
+    public Set<RiskFactor> evaluate(TransactionDetails transaction) {
         var riskFactors = new HashSet<RiskFactor>();
-        var amount = context.transactionDetails().amount();
+        var amount = transaction.amount();
 
         if (amount.compareTo(TRANSACTION_HIGH_AMOUNT_THRESHOLD) > 0) {
             var riskFactor = RiskFactor.builder()
@@ -31,8 +32,8 @@ class AmountBasedRiskFactorEvaluator implements RiskFactorEvaluator {
                                             amount,
                                             TRANSACTION_HIGH_AMOUNT_THRESHOLD)
                             ).build()
-                    );
-            riskFactors.add(riskFactor.build());
+                    ).build();
+            riskFactors.add(riskFactor);
         }
 
         if (amount.remainder(BigDecimal.TEN).compareTo(BigDecimal.ZERO) == 0) {
@@ -43,8 +44,8 @@ class AmountBasedRiskFactorEvaluator implements RiskFactorEvaluator {
                             .code("ROUND_TRANSACTION_AMOUNT")
                             .message(String.format("Transaction amount %s is a round number", amount))
                             .build()
-                    );
-            riskFactors.add(riskFactor.build());
+                    ).build();
+            riskFactors.add(riskFactor);
         }
 
         return riskFactors;

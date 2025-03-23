@@ -1,8 +1,6 @@
 package dev.b6k.fds.transaction.riskassessment;
 
 import dev.b6k.fds.DateTimeProvider;
-import dev.b6k.fds.bin.BinNotFoundException;
-import dev.b6k.fds.bin.details.BinDetailsProvider;
 import dev.b6k.fds.transaction.TransactionDetails;
 import dev.b6k.fds.transaction.TransactionEntity;
 import dev.b6k.fds.transaction.TransactionRepository;
@@ -17,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TransactionRiskAssessmentService {
     private final TransactionRepository transactionRepository;
-    private final BinDetailsProvider binDetailsProvider;
     private final DateTimeProvider dateTimeProvider;
     private final Instance<RiskFactorEvaluator> riskFactorEvaluators;
 
@@ -25,19 +22,8 @@ public class TransactionRiskAssessmentService {
 
     @Transactional
     public TransactionRiskAssessment assessTransactionRisk(TransactionDetails transaction) {
-        var binDetails = switch (binDetailsProvider.getBinDetails(transaction.bin())) {
-            case BinDetailsProvider.Result.Success success ->  success.details();
-            case BinDetailsProvider.Result.NoData noData -> throw new BinNotFoundException(noData.reason());
-        };
-        var pastTransactions = transactionRepository.findAllByBin(transaction.bin());
-
-        var evaluationContext = RiskFactorEvaluator.EvaluationContext.builder()
-                .transactionDetails(transaction)
-                .pastTransactions(pastTransactions)
-                .binDetails(binDetails)
-                .build();
         var riskFactors = riskFactorEvaluators.stream()
-                .flatMap(evaluator -> evaluator.evaluate(evaluationContext).stream())
+                .flatMap(evaluator -> evaluator.evaluate(transaction).stream())
                 .toList();
 
         var riskScoreSum = riskFactors.stream()

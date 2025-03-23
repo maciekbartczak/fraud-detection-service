@@ -4,11 +4,28 @@ import dev.b6k.fds.bin.Bin;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Optional;
 
 @ApplicationScoped
 public class TransactionRepository implements PanacheRepository<TransactionEntity> {
-    public List<TransactionEntity> findAllByBin(Bin bin) {
-        return find("bin", bin.value().toString()).list();
+    public TransactionStatistics getTransactionsStatistics(Bin bin) {
+        var result = getEntityManager()
+                .createQuery("select count(t), avg(t.amount) from TransactionEntity t where t.bin = :bin", Object[].class)
+                .setParameter("bin", bin.value().toString())
+                .getSingleResult();
+        var totalCount = ((Number) result[0]);
+        var averageAmount = ((Double) result[1]);
+
+        return new TransactionStatistics(
+                totalCount.intValue(),
+                Optional.ofNullable(averageAmount)
+                        .map(it -> BigDecimal.valueOf(it).setScale(2, RoundingMode.HALF_UP))
+                        .orElse(BigDecimal.ZERO)
+        );
+    }
+
+    public record TransactionStatistics(int totalCount, BigDecimal averageAmount) {
     }
 }

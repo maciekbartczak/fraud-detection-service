@@ -25,14 +25,9 @@ class AmountBasedRiskFactorEvaluatorTest {
                 .currency(Currency.of("PLN"))
                 .countryCode(CountryCode.of("POL"))
                 .build();
-        var context = RiskFactorEvaluator.EvaluationContext.builder()
-                .transactionDetails(transactionDetails)
-                .binDetails(null)
-                .pastTransactions(List.of())
-                .build();
 
         // when
-        var result = evaluator.evaluate(context);
+        var result = evaluator.evaluate(transactionDetails);
 
         // then
         assertThat(result)
@@ -59,14 +54,9 @@ class AmountBasedRiskFactorEvaluatorTest {
                 .currency(Currency.of("PLN"))
                 .countryCode(CountryCode.of("POL"))
                 .build();
-        var context = RiskFactorEvaluator.EvaluationContext.builder()
-                .transactionDetails(transactionDetails)
-                .binDetails(null)
-                .pastTransactions(List.of())
-                .build();
 
         // when
-        var result = evaluator.evaluate(context);
+        var result = evaluator.evaluate(transactionDetails);
 
         // then
         assertThat(result)
@@ -93,14 +83,9 @@ class AmountBasedRiskFactorEvaluatorTest {
                 .currency(Currency.of("PLN"))
                 .countryCode(CountryCode.of("POL"))
                 .build();
-        var context = RiskFactorEvaluator.EvaluationContext.builder()
-                .transactionDetails(transactionDetails)
-                .binDetails(null)
-                .pastTransactions(List.of())
-                .build();
 
         // when
-        var result = evaluator.evaluate(context);
+        var result = evaluator.evaluate(transactionDetails);
 
         // then
         assertThat(result)
@@ -119,14 +104,9 @@ class AmountBasedRiskFactorEvaluatorTest {
                 .currency(Currency.of("PLN"))
                 .countryCode(CountryCode.of("POL"))
                 .build();
-        var context = RiskFactorEvaluator.EvaluationContext.builder()
-                .transactionDetails(transactionDetails)
-                .binDetails(null)
-                .pastTransactions(List.of())
-                .build();
 
         // when
-        var result = evaluator.evaluate(context);
+        var result = evaluator.evaluate(transactionDetails);
 
         // then
         assertThat(result).isEmpty();
