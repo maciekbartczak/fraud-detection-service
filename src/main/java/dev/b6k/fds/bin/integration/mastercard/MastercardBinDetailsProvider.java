@@ -5,6 +5,7 @@ import dev.b6k.fds.Currency;
 import dev.b6k.fds.bin.Bin;
 import dev.b6k.fds.bin.details.BinDetails;
 import dev.b6k.fds.bin.details.BinDetailsProvider;
+import dev.b6k.fds.bin.integration.ExternalApiException;
 import dev.b6k.fds.integration.mastercard.bin.api.ApiException;
 import dev.b6k.fds.integration.mastercard.bin.api.BinLookupApi;
 import dev.b6k.fds.integration.mastercard.bin.model.BinResource;
@@ -39,7 +40,7 @@ class MastercardBinDetailsProvider implements BinDetailsProvider {
                     .orElseGet(() -> new Result.NoData("No data found for the given BIN in the Mastercard API"));
         } catch (ApiException e) {
             Log.error("Failed to retrieve BIN details from Mastercard API", e);
-            throw new RuntimeException(e);
+            throw new ExternalApiException("Failed to retrieve BIN details from Mastercard API", e);
         }
     }
 
