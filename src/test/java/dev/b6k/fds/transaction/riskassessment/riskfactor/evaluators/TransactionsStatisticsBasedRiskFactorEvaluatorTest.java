@@ -26,6 +26,12 @@ class TransactionsStatisticsBasedRiskFactorEvaluatorTest {
         // given
         var transactionRepository = mock(TransactionRepository.class);
         when(transactionRepository.getTransactionsStatistics(any())).thenReturn(new NoTransactions());
+        var transaction = TransactionDetails.builder()
+                .bin(Bin.of("123456"))
+                .amount(BigDecimal.valueOf(100))
+                .currency(Currency.of("PLN"))
+                .countryCode(CountryCode.of("POL"))
+                .build();
 
         var evaluator = new TransactionsStatisticsBasedRiskFactorEvaluator(
                 transactionRepository,
@@ -34,13 +40,6 @@ class TransactionsStatisticsBasedRiskFactorEvaluatorTest {
                 FIRST_TRANSACTION_RISK_SCORE,
                 UNUSUAL_AMOUNT_MULTIPLIER
         );
-
-        var transaction = TransactionDetails.builder()
-                .bin(Bin.of("123456"))
-                .amount(BigDecimal.valueOf(100))
-                .currency(Currency.of("PLN"))
-                .countryCode(CountryCode.of("POL"))
-                .build();
 
         // when
         var riskFactors = evaluator.evaluate(transaction);
