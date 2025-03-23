@@ -41,17 +41,17 @@ class MastercardBinDetailsProvider implements BinDetailsProvider {
         }
     }
 
-    private BinDetails makeBinDetails(BinResource it) {
+    private BinDetails makeBinDetails(BinResource bin) {
         return BinDetails.builder()
-                .bin(Bin.of(it.getBinNum()))
+                .bin(Bin.of(bin.getBinNum()))
                 .issuer(new BinDetails.Issuer(
-                        it.getCustomerName(),
-                        new BinDetails.Country(it.getCountry().getAlpha3(), it.getCountry().getName())
+                        bin.getCustomerName(),
+                        new BinDetails.Country(bin.getCountry().getAlpha3(), bin.getCountry().getName())
                 ))
-                .billingCurrency(new BinDetails.Currency(it.getBillingCurrencyDefault()))
-                .fundingSource(mapFundingSource(it.getFundingSource()))
-                .accountHolderType(mapAccountHolderType(it.getConsumerType()))
-                .domesticUseOnly(it.getLocalUse())
+                .billingCurrency(new BinDetails.Currency(bin.getBillingCurrencyDefault()))
+                .fundingSource(mapFundingSource(bin.getFundingSource()))
+                .accountHolderType(mapAccountHolderType(bin.getConsumerType()))
+                .domesticUseOnly(bin.getLocalUse())
                 .build();
     }
 
