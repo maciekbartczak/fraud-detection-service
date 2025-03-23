@@ -8,7 +8,7 @@ paths:
   /api/v1/transaction/risk-assessment:
     post:
       tags:
-        - risk-assessment
+        - transaction/risk-assessment
       description: Assess the risk of a single transaction
       operationId: assessTransactionRisk
       requestBody:
@@ -16,13 +16,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RiskAssessmentRequest"
+              $ref: "#/components/schemas/TransactionRiskAssessmentRequest"
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RiskAssessmentResponse"
+                $ref: "#/components/schemas/TransactionRiskAssessmentResponse"
           description: Risk assessment data returned successfully
 
   /api/v1/bin/{binNumber}:
@@ -62,7 +62,7 @@ paths:
 
 components:
   schemas:
-    RiskAssessmentRequest:
+    TransactionRiskAssessmentRequest:
       type: object
       properties:
         bin:
@@ -94,7 +94,7 @@ components:
         - currency
         - location
 
-    RiskAssessmentResponse:
+    TransactionRiskAssessmentResponse:
       type: object
       properties:
         riskScore:

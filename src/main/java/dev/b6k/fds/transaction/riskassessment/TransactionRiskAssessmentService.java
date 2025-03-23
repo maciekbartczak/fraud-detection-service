@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
 @RequiredArgsConstructor
-class RiskAssessmentService {
+public class TransactionRiskAssessmentService {
     private final TransactionRepository transactionRepository;
     private final BinDetailsProvider binDetailsProvider;
     private final DateTimeProvider dateTimeProvider;
@@ -24,7 +24,7 @@ class RiskAssessmentService {
     private static final int MAX_RISK_SCORE = 100;
 
     @Transactional
-    RiskAssessment assessTransactionRisk(TransactionDetails transaction) {
+    public TransactionRiskAssessment assessTransactionRisk(TransactionDetails transaction) {
         var binDetails = switch (binDetailsProvider.getBinDetails(transaction.bin())) {
             case BinDetailsProvider.Result.Success success ->  success.details();
             case BinDetailsProvider.Result.NoData noData -> throw new BinNotFoundException(noData.reason());
@@ -48,7 +48,7 @@ class RiskAssessmentService {
         var entity = makeEntity(transaction, normalizedRiskScore.value());
         transactionRepository.persist(entity);
 
-        return RiskAssessment.builder()
+        return TransactionRiskAssessment.builder()
                 .score(normalizedRiskScore)
                 .riskFactorDescriptions(riskFactors.stream().map(RiskFactor::description).toList())
                 .build();
