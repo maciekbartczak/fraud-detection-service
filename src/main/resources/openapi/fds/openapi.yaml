@@ -9,6 +9,7 @@ paths:
     post:
       tags:
         - risk-assessment
+      description: Assess the risk of a single transaction
       operationId: assessTransactionRisk
       requestBody:
         required: true
@@ -64,32 +65,58 @@ components:
     RiskAssessmentRequest:
       type: object
       properties:
-        binNumber:
+        bin:
           type: string
+          description: The Bank Identification Number associated with the transaction
         amount:
+          type: number
+          description: The amount of the transaction
+        currency:
+          type: string
+          pattern: "^[A-Z]{3}$"
+          description: The currency of the transaction in ISO 4217 format
+        location:
+          description: The location of the transaction
           type: object
           properties:
-            value:
-              type: number
-            currency:
+            country:
               type: string
-        location:
-          type: string
+              pattern: "^[A-Z]{3}$"
+              description: The country code of the transaction location in ISO 3166-1 alfa-3 format
+          required:
+            - country
+      required:
+        - bin
+        - amount
+        - currency
+        - location
 
     RiskAssessmentResponse:
       type: object
       properties:
         riskScore:
           type: integer
+          minimum: 0
+          maximum: 100
+          description: The risk score of the transaction
         riskFactors:
           type: array
+          description: The factors contributing to the risk score
           items:
             type: object
             properties:
               factorName:
                 type: string
+                description: The name of the risk factor
               factorDescription:
                 type: string
+                description: Detailed description of the risk factor
+            required:
+              - factorName
+              - factorDescription
+      required:
+        - riskScore
+        - riskFactors
 
     GetBinDetailsResponse:
       type: object
