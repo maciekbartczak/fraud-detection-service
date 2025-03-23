@@ -41,6 +41,7 @@ class MastercardApiClientConfiguration {
         return new MastercardBinApiAuthorizationFilter(objectMapper, signingKey, apiKey);
     }
 
+    // Needs to be Singleton since it is passed to an external library
     @Singleton
     PrivateKey signingKey() {
         try {
