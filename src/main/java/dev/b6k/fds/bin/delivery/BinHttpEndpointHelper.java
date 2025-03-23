@@ -9,7 +9,7 @@ import lombok.experimental.UtilityClass;
 class BinHttpEndpointHelper {
     public static GetBinDetailsResponse makeGetBinDetailsResponse(BinDetails details) {
         return GetBinDetailsResponse.builder()
-                .bin(details.bin().value())
+                .bin(details.bin().asBigDecimal())
                 .issuerName(details.issuer().name())
                 .issuerCountry(GetBinDetailsResponseIssuerCountry.builder()
                         .code(details.issuer().country().code().value())

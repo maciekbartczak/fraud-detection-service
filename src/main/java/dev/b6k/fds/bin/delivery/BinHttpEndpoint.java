@@ -17,7 +17,7 @@ class BinHttpEndpoint implements BinApi {
 
     @Override
     public GetBinDetailsResponse getBinDetails(BigDecimal binNumber) {
-        var bin = new Bin(binNumber);
+        var bin = Bin.of(binNumber);
 
         var details = binDetailsProvider.getBinDetails(bin);
 

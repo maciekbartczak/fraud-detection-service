@@ -27,7 +27,7 @@ class MastercardBinDetailsProvider implements BinDetailsProvider {
     @CacheResult(cacheName = "bin-details-cache")
     public Result getBinDetails(Bin bin) {
         var searchByAccountRange = new SearchByAccountRange();
-        searchByAccountRange.accountRange(bin.value());
+        searchByAccountRange.accountRange(bin.asBigDecimal());
 
         try {
             var response = client.searchByAccountRangeResources(searchByAccountRange);

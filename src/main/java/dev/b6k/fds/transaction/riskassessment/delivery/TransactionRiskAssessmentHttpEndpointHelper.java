@@ -20,7 +20,7 @@ class TransactionRiskAssessmentHttpEndpointHelper {
 
     static TransactionDetails toTransactionDetails(TransactionRiskAssessmentRequest request) {
         return TransactionDetails.builder()
-                .bin(new Bin(request.getBin()))
+                .bin(Bin.of(request.getBin()))
                 .amount(request.getAmount())
                 .currency(Currency.of(request.getCurrency()))
                 .countryCode(CountryCode.of(request.getLocation().getCountryCode()))

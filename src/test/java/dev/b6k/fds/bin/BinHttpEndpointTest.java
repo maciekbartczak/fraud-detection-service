@@ -57,7 +57,7 @@ class BinHttpEndpointTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"12345", "123456789012"})
+    @ValueSource(strings = {"12345", "123456789012", "123456.1"})
     void validateBin(String invalidBinNumber) {
         // given & when
         var response = callGetBinDetailsService(invalidBinNumber, 400, ErrorResponse.class);

@@ -217,7 +217,7 @@
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <typeMappings>
-                                integer=BigDecimal
+                                integer=java.math.BigInteger
                             </typeMappings>
                             <configurationFile>
                                 ${project.basedir}/src/main/resources/openapi/mastercard/config.json
