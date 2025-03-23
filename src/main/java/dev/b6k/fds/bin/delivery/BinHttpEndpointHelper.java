@@ -2,7 +2,7 @@ package dev.b6k.fds.bin.delivery;
 
 import dev.b6k.fds.bin.details.BinDetails;
 import dev.b6k.fds.model.GetBinDetailsResponse;
-import dev.b6k.fds.model.GetBinDetailsResponseCountry;
+import dev.b6k.fds.model.GetBinDetailsResponseIssuerCountry;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -10,15 +10,15 @@ class BinHttpEndpointHelper {
     public static GetBinDetailsResponse makeGetBinDetailsResponse(BinDetails details) {
         return GetBinDetailsResponse.builder()
                 .bin(details.bin().value())
-                .customerName(details.customerName())
-                .country(GetBinDetailsResponseCountry.builder()
-                        .code(details.country().code())
-                        .name(details.country().name())
+                .issuerName(details.issuer().name())
+                .issuerCountry(GetBinDetailsResponseIssuerCountry.builder()
+                        .code(details.issuer().country().code())
+                        .name(details.issuer().country().name())
                         .build())
-                .billingCurrency(details.billingCurrency())
+                .billingCurrency(details.billingCurrency().code())
                 .fundingSource(mapFundingSource(details.fundingSource()))
-                .consumerType(mapConsumerType(details.consumerType()))
-                .localUse(details.localUse())
+                .consumerType(mapConsumerType(details.accountHolderType()))
+                .localUse(details.domesticUseOnly())
                 .build();
     }
 
@@ -31,8 +31,8 @@ class BinHttpEndpointHelper {
         };
     }
 
-    private static GetBinDetailsResponse.ConsumerTypeEnum mapConsumerType(BinDetails.ConsumerType consumerType) {
-        return switch (consumerType) {
+    private static GetBinDetailsResponse.ConsumerTypeEnum mapConsumerType(BinDetails.AccountHolderType accountHolderType) {
+        return switch (accountHolderType) {
             case CONSUMER -> GetBinDetailsResponse.ConsumerTypeEnum.CONSUMER;
             case CORPORATE -> GetBinDetailsResponse.ConsumerTypeEnum.CORPORATE;
         };

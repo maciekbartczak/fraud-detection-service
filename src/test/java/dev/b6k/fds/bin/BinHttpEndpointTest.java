@@ -89,9 +89,9 @@ class BinHttpEndpointTest {
 
         // then
         assertThat(response.getBin()).isEqualTo(binNumber);
-        assertEquals("DFCC BANK PLC", response.getCustomerName());
-        assertEquals("LKA", response.getCountry().getCode());
-        assertEquals("Sri Lanka", response.getCountry().getName());
+        assertEquals("DFCC BANK PLC", response.getIssuerName());
+        assertEquals("LKA", response.getIssuerCountry().getCode());
+        assertEquals("Sri Lanka", response.getIssuerCountry().getName());
         assertEquals("LKR", response.getBillingCurrency());
         assertEquals(GetBinDetailsResponse.FundingSourceEnum.CREDIT, response.getFundingSource());
         assertEquals(GetBinDetailsResponse.ConsumerTypeEnum.CONSUMER, response.getConsumerType());

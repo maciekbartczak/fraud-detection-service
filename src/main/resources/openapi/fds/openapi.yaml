@@ -97,20 +97,20 @@ components:
         bin:
           type: number
           description: The Bank Identification Number
-        customerName:
+        issuerName:
           type: string
           description: The issuer name
-        country:
+        issuerCountry:
           type: object
           description: Country of origin of the issuer.
           properties:
             code:
               type: string
-              description: The country code in ISO 3166-1 alfa-3 format
+              description: The issuingCountry code in ISO 3166-1 alfa-3 format
               example: POL
             name:
               type: string
-              description: The country name in human readable format
+              description: The issuingCountry name in human readable format
               example: Poland
           required:
             - code
@@ -135,14 +135,14 @@ components:
           description: The type of the customer.
         localUse:
           type: boolean
-          description: Flag indicating whether the card may be used outside of the country of issuance.
+          description: Flag indicating whether the card may be used outside of the issuingCountry of issuance.
       required:
         - bin
         - customerName
         - consumerType
         - billingCurrency
         - fundingSource
-        - consumerType
+        - accountHolderType
         - localUse
 
     ErrorResponse:

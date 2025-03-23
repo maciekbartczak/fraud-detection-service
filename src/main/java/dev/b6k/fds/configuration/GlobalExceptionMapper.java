@@ -2,6 +2,7 @@ package dev.b6k.fds.configuration;
 
 import dev.b6k.fds.model.ErrorResponse;
 import dev.b6k.fds.model.ErrorResponseErrorsInner;
+import io.quarkus.logging.Log;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
@@ -12,6 +13,7 @@ import java.util.List;
 public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
     @Override
     public Response toResponse(Throwable throwable) {
+        Log.error("Uncaught Exception", throwable);
         var errorResponse = ErrorResponse.builder()
                 .errors(List.of(
                         ErrorResponseErrorsInner.builder()

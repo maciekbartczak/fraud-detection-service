@@ -44,19 +44,21 @@ class MastercardBinDetailsProvider implements BinDetailsProvider {
     private BinDetails makeBinDetails(BinResource it) {
         return BinDetails.builder()
                 .bin(Bin.of(it.getBinNum()))
-                .customerName(it.getCustomerName())
-                .country(new BinDetails.Country(it.getCountry().getAlpha3(), it.getCountry().getName()))
-                .billingCurrency(it.getBillingCurrencyDefault())
+                .issuer(new BinDetails.Issuer(
+                        it.getCustomerName(),
+                        new BinDetails.Country(it.getCountry().getAlpha3(), it.getCountry().getName())
+                ))
+                .billingCurrency(new BinDetails.Currency(it.getBillingCurrencyDefault()))
                 .fundingSource(mapFundingSource(it.getFundingSource()))
-                .consumerType(mapConsumerType(it.getConsumerType()))
-                .localUse(it.getLocalUse())
+                .accountHolderType(mapAccountHolderType(it.getConsumerType()))
+                .domesticUseOnly(it.getLocalUse())
                 .build();
     }
 
-    private BinDetails.ConsumerType mapConsumerType(String consumerType) {
+    private BinDetails.AccountHolderType mapAccountHolderType(String consumerType) {
         return switch (consumerType) {
-            case "CONSUMER" -> BinDetails.ConsumerType.CONSUMER;
-            case "CORPORATE" -> BinDetails.ConsumerType.CORPORATE;
+            case "CONSUMER" -> BinDetails.AccountHolderType.CONSUMER;
+            case "CORPORATE" -> BinDetails.AccountHolderType.CORPORATE;
             default -> throw new IllegalStateException("Unexpected value: " + consumerType);
         };
     }
