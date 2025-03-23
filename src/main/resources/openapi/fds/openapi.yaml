@@ -102,6 +102,13 @@ components:
           minimum: 0
           maximum: 100
           description: The risk score of the transaction
+        riskLevel:
+          type: string
+          enum:
+            - LOW
+            - MEDIUM
+            - HIGH
+          description: The risk level of the transaction
         riskFactors:
           type: array
           description: The factors contributing to the risk score

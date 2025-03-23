@@ -12,9 +12,9 @@ class TransactionRiskAssessmentHttpEndpoint implements TransactionRiskAssessment
 
     @Override
     public TransactionRiskAssessmentResponse assessTransactionRisk(TransactionRiskAssessmentRequest request) {
-        var transactionDetails = TransactionRiskAssessmentHelper.toTransactionDetails(request);
+        var transactionDetails = TransactionRiskAssessmentHttpEndpointHelper.toTransactionDetails(request);
         var result = transactionRiskAssessmentService.assessTransactionRisk(transactionDetails);
 
-        return TransactionRiskAssessmentHelper.toResponse(result);
+        return TransactionRiskAssessmentHttpEndpointHelper.toResponse(result);
     }
 }

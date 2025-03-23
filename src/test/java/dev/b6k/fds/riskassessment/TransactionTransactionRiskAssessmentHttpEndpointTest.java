@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 
 import static io.restassured.RestAssured.given;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
 @QuarkusTestResource(WireMockExtension.class)
@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TransactionTransactionRiskAssessmentHttpEndpointTest {
 
     @Test
-    void assessSingleTransactionRisk() {
+    void assessRiskForLowRiskTransaction() {
         // given
         var binNumber = "123456";
         MastercardBinApiStubHelper.prepareSuccessResponse(binNumber);
@@ -40,7 +40,7 @@ public class TransactionTransactionRiskAssessmentHttpEndpointTest {
         var response = callRiskAssessmentService(request, 200, TransactionRiskAssessmentResponse.class);
 
         // then
-        assertThat(response).isNotNull();
+        assertEquals(TransactionRiskAssessmentResponse.RiskLevelEnum.LOW, response.getRiskLevel());
     }
 
     private <T> T callRiskAssessmentService(TransactionRiskAssessmentRequest request, int expectedStatusCode, Class<T> responseClass) {
