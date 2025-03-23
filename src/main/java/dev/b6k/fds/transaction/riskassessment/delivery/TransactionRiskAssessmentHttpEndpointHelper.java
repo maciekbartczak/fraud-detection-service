@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 
 @UtilityClass
 class TransactionRiskAssessmentHttpEndpointHelper {
-    private static final int LOW_RISK_THRESHOLD = 40;
-    private static final int MEDIUM_RISK_THRESHOLD = 70;
+    private static final int LOW_RISK_THRESHOLD = 30;
+    private static final int MEDIUM_RISK_THRESHOLD = 60;
 
     static TransactionDetails toTransactionDetails(TransactionRiskAssessmentRequest request) {
         return TransactionDetails.builder()

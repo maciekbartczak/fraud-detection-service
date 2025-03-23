@@ -16,8 +16,8 @@ class MockBinDetailsProvider implements BinDetailsProvider {
         return new Result.Success(
                 BinDetails.builder()
                         .bin(bin)
-                        .issuer(new BinDetails.Issuer("Issuer", new BinDetails.Country(CountryCode.of("POL"), "Poland")))
-                        .billingCurrency(Currency.of("PLN"))
+                        .issuer(new BinDetails.Issuer("Issuer", new BinDetails.Country(CountryCode.of("RUS"), "Russia")))
+                        .billingCurrency(Currency.of("RBL"))
                         .fundingSource(BinDetails.FundingSource.DEBIT)
                         .accountHolderType(BinDetails.AccountHolderType.CONSUMER)
                         .domesticUseOnly(false)

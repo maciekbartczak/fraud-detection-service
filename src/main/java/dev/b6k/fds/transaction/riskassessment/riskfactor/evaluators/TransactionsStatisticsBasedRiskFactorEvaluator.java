@@ -14,9 +14,9 @@ import java.util.Set;
 @ApplicationScoped
 @RequiredArgsConstructor
 class TransactionsStatisticsBasedRiskFactorEvaluator implements RiskFactorEvaluator {
-    private static final RiskFactor.Weight WEIGHT = new RiskFactor.Weight(0.3);
-    private static final int UNUSUAL_AMOUNT_RISK_SCORE = 30;
-    private static final int FIRST_TRANSACTION_RISK_SCORE = 10;
+    private static final RiskFactor.Weight WEIGHT = new RiskFactor.Weight(0.25);
+    private static final int UNUSUAL_AMOUNT_RISK_SCORE = 50;
+    private static final int FIRST_TRANSACTION_RISK_SCORE = 25;
     private static final BigDecimal UNUSUAL_AMOUNT_MULTIPLIER = new BigDecimal("3.0");
 
     private final TransactionRepository transactionRepository;

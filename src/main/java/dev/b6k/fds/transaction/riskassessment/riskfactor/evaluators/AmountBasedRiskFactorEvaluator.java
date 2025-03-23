@@ -12,9 +12,9 @@ import java.util.Set;
 @ApplicationScoped
 class AmountBasedRiskFactorEvaluator implements RiskFactorEvaluator {
     private static final BigDecimal TRANSACTION_HIGH_AMOUNT_THRESHOLD = new BigDecimal("1000.00");
-    private static final RiskFactor.Weight WEIGHT = new RiskFactor.Weight(0.3);
-    public static final int HIGH_AMOUNT_RISK_SCORE = 20;
-    public static final int ROUND_AMOUNT_RISK_SCORE = 10;
+    private static final RiskFactor.Weight WEIGHT = new RiskFactor.Weight(0.25);
+    public static final int HIGH_AMOUNT_RISK_SCORE = 50;
+    public static final int ROUND_AMOUNT_RISK_SCORE = 25;
 
     @Override
     public Set<RiskFactor> evaluate(TransactionDetails transaction) {

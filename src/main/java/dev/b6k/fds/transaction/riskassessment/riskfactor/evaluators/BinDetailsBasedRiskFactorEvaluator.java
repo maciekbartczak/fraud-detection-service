@@ -17,10 +17,10 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 @RequiredArgsConstructor
 class BinDetailsBasedRiskFactorEvaluator implements RiskFactorEvaluator {
-    private static final RiskFactor.Weight WEIGHT = new RiskFactor.Weight(0.6);
-    private static final int PREPAID_CARD_RISK_SCORE = 10;
-    private static final int FOREIGN_CARD_RISK_SCORE = 20;
-    private static final int HIGH_RISK_COUNTRY_SCORE = 30;
+    private static final RiskFactor.Weight WEIGHT = new RiskFactor.Weight(0.5);
+    private static final int PREPAID_CARD_RISK_SCORE = 25;
+    private static final int FOREIGN_CARD_RISK_SCORE = 50;
+    private static final int HIGH_RISK_COUNTRY_SCORE = 75;
     private static final Set<CountryCode> HIGH_RISK_COUNTRIES = Set.of("RUS", "BLR", "IRN", "PRK", "CUB", "VEN")
             .stream()
             .map(CountryCode::of)
@@ -58,8 +58,11 @@ class BinDetailsBasedRiskFactorEvaluator implements RiskFactorEvaluator {
                     .description(
                             RiskFactor.Description.builder()
                                     .code("FOREIGN_CARD")
-                                    .message(String.format("Card issuer country %s is different from transaction country %s", issuerCountry, transactionCountry))
-                                    .build()
+                                    .message(String.format(
+                                            "Card issuer country %s is different from transaction country %s",
+                                            issuerCountry.value(),
+                                            transactionCountry.value())
+                                    ).build()
                     ).build();
             riskFactors.add(riskFactor);
         }
@@ -71,8 +74,10 @@ class BinDetailsBasedRiskFactorEvaluator implements RiskFactorEvaluator {
                     .description(
                             RiskFactor.Description.builder()
                                     .code("HIGH_RISK_COUNTRY")
-                                    .message(String.format("Card issuer country %s is in high risk country list", binDetails.issuer().country().code()))
-                                    .build()
+                                    .message(String.format(
+                                            "Card issuer country %s is in high risk country list",
+                                            binDetails.issuer().country().code().value())
+                                    ).build()
                     ).build();
             riskFactors.add(riskFactor);
         }
