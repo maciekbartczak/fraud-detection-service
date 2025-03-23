@@ -4,10 +4,7 @@ import dev.b6k.fds.MastercardBinApiStubHelper;
 import dev.b6k.fds.MastercardBinApiTestProfile;
 import dev.b6k.fds.WireMockExtension;
 import dev.b6k.fds.integration.mastercard.bin.model.BinResourceCountry;
-import dev.b6k.fds.model.TransactionRiskAssessmentRequest;
-import dev.b6k.fds.model.TransactionRiskAssessmentRequestLocation;
-import dev.b6k.fds.model.TransactionRiskAssessmentResponse;
-import dev.b6k.fds.model.TransactionRiskAssessmentResponseRiskFactorsInner;
+import dev.b6k.fds.model.*;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
@@ -172,6 +169,52 @@ public class TransactionTransactionRiskAssessmentHttpEndpointTest {
                         "UNUSUAL_AMOUNT",
                         "ROUND_TRANSACTION_AMOUNT"
                 );
+    }
+
+    @Test
+    void getErrorResponseWhenBinNotFound() {
+        // given
+        var binNumber = "9999742";
+        MastercardBinApiStubHelper.prepareNoDataResponse(binNumber);
+
+        // when
+        var response = callRiskAssessmentService(
+                getRiskAssessmentRequestBuilder(binNumber).build(),
+                404,
+                ErrorResponse.class
+        );
+
+        // then
+        assertThat(response.getErrors())
+                .hasSize(1)
+                .first()
+                .satisfies(error -> {
+                    assertEquals("NOT_FOUND", error.getCode());
+                    assertEquals("No data found for the given BIN in the Mastercard API", error.getMessage());
+                });
+    }
+
+    @Test
+    void getErrorResponseWhenApiFails() {
+        // given
+        var binNumber = "9999743";
+        MastercardBinApiStubHelper.prepareErrorResponse();
+
+        // when
+        var response = callRiskAssessmentService(
+                getRiskAssessmentRequestBuilder(binNumber).build(),
+                500,
+                ErrorResponse.class
+        );
+
+        // then
+        assertThat(response.getErrors())
+                .hasSize(1)
+                .first()
+                .satisfies(error -> {
+                    assertEquals("EXTERNAL_API_ERROR", error.getCode());
+                    assertEquals("Failed to retrieve BIN details from Mastercard API", error.getMessage());
+                });
     }
 
     private TransactionRiskAssessmentRequest.TransactionRiskAssessmentRequestBuilder<?, ?> getRiskAssessmentRequestBuilder(String binNumber) {

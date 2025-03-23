@@ -56,6 +56,16 @@ public class MastercardBinApiStubHelper {
         prepareServiceResponse(bin, EMPTY_BIN_RANGE_RESPONSE_BODY);
     }
 
+    public static void prepareErrorResponse() {
+        WireMockExtension.getWireMockServer()
+                .stubFor(post(urlEqualTo("/bin-ranges/account-searches"))
+                        .willReturn(aResponse()
+                                .withStatus(500)
+                                .withHeader("Content-Type", "application/json")
+                                .withBody("Internal Server Error"))
+                );
+    }
+
     public static void prepareServiceResponse(String bin, String responseBody) {
         WireMockExtension.getWireMockServer()
                 .stubFor(post(urlEqualTo("/bin-ranges/account-searches"))
