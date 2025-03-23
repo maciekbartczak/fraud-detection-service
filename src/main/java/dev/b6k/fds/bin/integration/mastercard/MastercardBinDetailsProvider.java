@@ -23,7 +23,7 @@ class MastercardBinDetailsProvider implements BinDetailsProvider {
 
     @Override
     @CacheResult(cacheName = "bin-details-cache")
-    public GetBinDetailsResult getBinDetails(Bin bin) {
+    public Result getBinDetails(Bin bin) {
         var searchByAccountRange = new SearchByAccountRange();
         searchByAccountRange.accountRange(bin.value());
 
@@ -33,8 +33,8 @@ class MastercardBinDetailsProvider implements BinDetailsProvider {
 
             return Optional.ofNullable(response)
                     .flatMap(it -> it.stream().findFirst())
-                    .<GetBinDetailsResult>map(it -> new GetBinDetailsResult.Success(makeBinDetails(it)))
-                    .orElseGet(() -> new GetBinDetailsResult.NoData("No data found for the given BIN in the Mastercard API"));
+                    .<Result>map(it -> new Result.Success(makeBinDetails(it)))
+                    .orElseGet(() -> new Result.NoData("No data found for the given BIN in the Mastercard API"));
         } catch (ApiException e) {
             Log.error("Failed to retrieve BIN details from Mastercard API", e);
             throw new RuntimeException(e);

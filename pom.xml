@@ -31,6 +31,12 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- core quarkus dependencies -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-arc</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest</artifactId>
@@ -57,7 +63,6 @@
             <artifactId>quarkus-smallrye-jwt-build</artifactId>
         </dependency>
 
-
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-hibernate-orm</artifactId>
@@ -70,14 +75,18 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-jdbc-postgresql</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-flyway</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-flyway-postgresql</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-cache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-arc</artifactId>
         </dependency>
 
         <dependency>
@@ -85,12 +94,12 @@
             <artifactId>quarkus-rest-client-jackson</artifactId>
         </dependency>
 
+        <!-- external dependencies -->
         <dependency>
             <groupId>com.mastercard.developer</groupId>
             <artifactId>oauth1-signer</artifactId>
             <version>1.5.3</version>
         </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

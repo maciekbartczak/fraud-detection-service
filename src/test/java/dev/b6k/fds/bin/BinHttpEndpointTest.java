@@ -1,5 +1,6 @@
 package dev.b6k.fds.bin;
 
+import dev.b6k.fds.MastercardBinApiStubHelper;
 import dev.b6k.fds.MastercardBinApiTestProfile;
 import dev.b6k.fds.WireMockExtension;
 import dev.b6k.fds.model.ErrorResponse;
@@ -29,44 +30,6 @@ class BinHttpEndpointTest {
     @CacheName("bin-details-cache")
     Cache binDetailsCache;
 
-    private static final String EMPTY_BIN_RANGE_RESPONSE_BODY = "[]";
-    private static final String BIN_RANGE_RESPONSE_BODY = """
-            [
-              {
-                "lowAccountRange": 5221696500000000000,
-                "highAccountRange": 5221696600000000000,
-                "binNum": "123456",
-                "binLength": 6,
-                "acceptanceBrand": "MCC",
-                "ica": "00000022053",
-                "customerName": "DFCC BANK PLC",
-                "country": {
-                  "code": 144,
-                  "alpha3": "LKA",
-                  "name": "Sri Lanka"
-                },
-                "localUse": false,
-                "authorizationOnly": false,
-                "productCode": "MCW",
-                "productDescription": "WORLD",
-                "governmentRange": false,
-                "nonReloadableIndicator": false,
-                "anonymousPrepaidIndicator": "N",
-                "cardholderCurrencyIndicator": "D",
-                "billingCurrencyDefault": "LKR",
-                "programName": null,
-                "vertical": null,
-                "fundingSource": "CREDIT",
-                "consumerType": "CONSUMER",
-                "smartDataEnabled": true,
-                "affiliate": null,
-                "comboCardIndicator": "N",
-                "flexCardIndicator": "N",
-                "gamblingBlockEnabled": false,
-                "paymentAccountType": "P"
-              }
-            ]""";
-
     @BeforeEach
     void setup() {
         binDetailsCache.invalidateAll().await().indefinitely();
@@ -77,7 +40,7 @@ class BinHttpEndpointTest {
     void getBinDetails() {
         // given
         var bin = "123456";
-        prepareServiceResponse(bin, BIN_RANGE_RESPONSE_BODY);
+        MastercardBinApiStubHelper.prepareSuccessResponse(bin);
 
         // when
         var response = callGetBinDetailsService(bin, 200, GetBinDetailsResponse.class);
@@ -113,7 +76,7 @@ class BinHttpEndpointTest {
     void returnErrorResponseWhenGettingNonExistingBinDetails() {
         // given
         var binNumber = "654321";
-        prepareServiceResponse(binNumber, "[]");
+        MastercardBinApiStubHelper.prepareNoDataResponse(binNumber);
 
         // when
         var response = callGetBinDetailsService(binNumber, 404, ErrorResponse.class);
@@ -132,10 +95,10 @@ class BinHttpEndpointTest {
     void setCorrectAuthorizationHeaderWhenCallingMastercardApi() {
         // given
         var binNumber = "654321";
-        prepareServiceResponse(binNumber, EMPTY_BIN_RANGE_RESPONSE_BODY);
+        MastercardBinApiStubHelper.prepareSuccessResponse(binNumber);
 
         // when
-        callGetBinDetailsService(binNumber, 404, ErrorResponse.class);
+        callGetBinDetailsService(binNumber, 200, GetBinDetailsResponse.class);
 
         // then
         var requests = WireMockExtension.getWireMockServer()
@@ -156,7 +119,7 @@ class BinHttpEndpointTest {
         void cacheBinDetailsOnSuccessfulResponse() {
             // given
             var binNumber = "123456";
-            prepareServiceResponse(binNumber, BIN_RANGE_RESPONSE_BODY);
+            MastercardBinApiStubHelper.prepareSuccessResponse(binNumber);
 
             // when
             callGetBinDetailsService(binNumber, 200, GetBinDetailsResponse.class);
@@ -170,7 +133,7 @@ class BinHttpEndpointTest {
         void cacheNonExistingBinDetailsResponse() {
             // given
             var binNumber = "55555567";
-            prepareServiceResponse(binNumber, EMPTY_BIN_RANGE_RESPONSE_BODY);
+            MastercardBinApiStubHelper.prepareNoDataResponse(binNumber);
 
             // when
             callGetBinDetailsService(binNumber, 404, ErrorResponse.class);
@@ -199,23 +162,16 @@ class BinHttpEndpointTest {
         }
     }
 
-    private void prepareServiceResponse(String bin, String responseBody) {
-        WireMockExtension.getWireMockServer()
-                .stubFor(post(urlEqualTo("/bin-ranges/account-searches"))
-                        .withRequestBody(matchingJsonPath("$.accountRange", equalTo(bin)))
-                        .willReturn(aResponse()
-                                .withStatus(200)
-                                .withHeader("Content-Type", "application/json")
-                                .withBody(responseBody))
-                );
-    }
+    private <T> T callGetBinDetailsService(String bin, int expectedStatusCode, Class<T> responseClass) {
+        return given()
+                .pathParam("bin", bin)
 
+                .when()
+                .get("/api/v1/bin/{bin}")
 
-    private <T> T callGetBinDetailsService(String binNumber, int expectedStatusCode, Class<T> responseClass) {
-        return given().pathParam("binNumber", binNumber)
-
-                .when().get("/api/v1/bin/{binNumber}")
-
-                .then().statusCode(expectedStatusCode).extract().as(responseClass);
+                .then()
+                .statusCode(expectedStatusCode)
+                .extract()
+                .as(responseClass);
     }
 }

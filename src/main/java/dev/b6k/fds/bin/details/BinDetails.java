@@ -12,6 +12,7 @@ public record BinDetails(
         AccountHolderType accountHolderType,
         boolean domesticUseOnly
 ) {
+    // TODO: this should be a common value object
     /**
      * @param code Country code in ISO 3166-1 alpha-3 format
      * @param name Human-readable country name
@@ -28,6 +29,7 @@ public record BinDetails(
         }
     }
 
+    // TODO: this should be a common value object
     /**
      * @param code Currency code in ISO 4217 format
     */
@@ -40,6 +42,10 @@ public record BinDetails(
             if (!code.matches("^[A-Z]{3}$")) {
                 throw new IllegalArgumentException("Currency code must be a 3-letter uppercase string");
             }
+        }
+
+        public static Currency of(String code) {
+            return new Currency(code);
         }
     }
 

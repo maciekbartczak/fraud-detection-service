@@ -8,10 +8,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 @IfBuildProperty(name = "fds.integration.bin.provider", stringValue = "mock", enableIfMissing = true)
-public class MockBinDetailsProvider implements BinDetailsProvider {
+class MockBinDetailsProvider implements BinDetailsProvider {
     @Override
-    public GetBinDetailsResult getBinDetails(Bin bin) {
-        return new GetBinDetailsResult.Success(
+    public Result getBinDetails(Bin bin) {
+        return new Result.Success(
                 BinDetails.builder()
                         .bin(bin)
                         .issuer(new BinDetails.Issuer("Issuer", new BinDetails.Country("POL", "Poland")))
