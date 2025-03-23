@@ -17,7 +17,7 @@ public class WireMockExtension implements QuarkusTestResourceLifecycleManager {
         wireMockServer = new WireMockServer(wireMockConfig().dynamicPort());
         wireMockServer.start();
 
-        return Map.of("fds.integration.mastercard.bin.base-url", wireMockServer.baseUrl());
+        return Map.of("fds.integration.bin.mastercard.base-url", wireMockServer.baseUrl());
     }
 
     @Override

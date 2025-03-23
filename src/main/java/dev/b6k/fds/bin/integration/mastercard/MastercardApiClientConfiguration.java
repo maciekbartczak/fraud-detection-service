@@ -15,17 +15,17 @@ import java.net.URI;
 import java.security.PrivateKey;
 
 @RequiredArgsConstructor
-@IfBuildProperty(name = "fds.integration.mastercard.bin.enabled", stringValue = "true")
+@IfBuildProperty(name = "fds.integration.bin.provider", stringValue = "mastercard")
 class MastercardApiClientConfiguration {
-    @ConfigProperty(name = "fds.integration.mastercard.bin.base-url")
+    @ConfigProperty(name = "fds.integration.bin.mastercard.base-url")
     String baseUrl;
-    @ConfigProperty(name = "fds.integration.mastercard.bin.api-key")
+    @ConfigProperty(name = "fds.integration.bin.mastercard.api-key")
     String apiKey;
-    @ConfigProperty(name = "fds.integration.mastercard.bin.signing-key.path")
+    @ConfigProperty(name = "fds.integration.bin.mastercard.signing-key.path")
     String keyPath;
-    @ConfigProperty(name = "fds.integration.mastercard.bin.signing-key.alias")
+    @ConfigProperty(name = "fds.integration.bin.mastercard.signing-key.alias")
     String keyAlias;
-    @ConfigProperty(name = "fds.integration.mastercard.bin.signing-key.password")
+    @ConfigProperty(name = "fds.integration.bin.mastercard.signing-key.password")
     String keyPassword;
 
     @ApplicationScoped

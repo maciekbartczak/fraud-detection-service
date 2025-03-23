@@ -1,6 +1,6 @@
 package dev.b6k.fds.bin;
 
-import dev.b6k.fds.MockCertificateTestProfile;
+import dev.b6k.fds.MastercardBinApiTestProfile;
 import dev.b6k.fds.WireMockExtension;
 import dev.b6k.fds.model.ErrorResponse;
 import dev.b6k.fds.model.GetBinDetailsResponse;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
 @QuarkusTestResource(WireMockExtension.class)
-@TestProfile(MockCertificateTestProfile.class)
+@TestProfile(MastercardBinApiTestProfile.class)
 class BinHttpEndpointTest {
     @Inject
     @CacheName("bin-details-cache")

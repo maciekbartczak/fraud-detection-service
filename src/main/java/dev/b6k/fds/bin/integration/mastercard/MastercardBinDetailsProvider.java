@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @ApplicationScoped
 @RequiredArgsConstructor
-@IfBuildProperty(name = "fds.integration.mastercard.bin.enabled", stringValue = "true")
+@IfBuildProperty(name = "fds.integration.bin.provider", stringValue = "mastercard")
 class MastercardBinDetailsProvider implements BinDetailsProvider {
     private final BinLookupApi client;
 
