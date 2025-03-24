@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @QuarkusTest
 @QuarkusTestResource(WireMockExtension.class)
 @TestProfile(MastercardBinApiTestProfile.class)
-class TransactionTransactionRiskAssessmentHttpEndpointTest extends BaseHttpEndpointTest {
+class TransactionRiskAssessmentHttpEndpointTest extends BaseHttpEndpointTest {
     @Inject
     TransactionRepository transactionRepository;
 
@@ -46,6 +46,30 @@ class TransactionTransactionRiskAssessmentHttpEndpointTest extends BaseHttpEndpo
         transactionRepository.findAll()
                 .stream()
                 .forEach(transactionRepository::delete);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"0.00", "-1.00", "100.543", "100000000000.00"})
+    void validateAmount(String invalidAmount) {
+        // given
+        var bin = "123456";
+        var request = getRiskAssessmentRequestBuilder(bin)
+                .amount(new BigDecimal(invalidAmount))
+                .build();
+
+        // when
+        var response = callRiskAssessmentService(
+                request,
+                400,
+                ErrorResponse.class
+        );
+
+        // then
+        assertThat(response.getErrors())
+                .hasSize(1)
+                .first()
+                .extracting(ErrorResponseErrorsInner::getCode)
+                .isEqualTo("VALIDATION_ERROR");
     }
 
     @Test
@@ -188,6 +212,41 @@ class TransactionTransactionRiskAssessmentHttpEndpointTest extends BaseHttpEndpo
                         "FOREIGN_CARD",
                         "UNUSUAL_AMOUNT",
                         "ROUND_TRANSACTION_AMOUNT"
+                );
+    }
+
+    @Test
+    void assessRiskForMaximumTransactionAmount() {
+        // given
+        var bin = "9870934";
+
+        MastercardBinApiStubHelper.prepareCustomServiceResponse(bin, response -> {
+            var country = new BinResourceCountry();
+            country.setAlpha3("POL");
+            country.setName("Poland");
+
+            response.setCountry(country);
+        });
+
+        var request = getRiskAssessmentRequestBuilder(bin)
+                .amount(new BigDecimal("99999999999.99"))
+                .build();
+
+        // when
+        var response = callRiskAssessmentService(
+                request,
+                200,
+                TransactionRiskAssessmentResponse.class
+        );
+
+
+        // then
+        assertThat(response.getRiskFactors())
+                .hasSize(2)
+                .extracting(TransactionRiskAssessmentResponseRiskFactorsInner::getFactorName)
+                .containsExactlyInAnyOrder(
+                        "HIGH_TRANSACTION_AMOUNT",
+                        "FIRST_TRANSACTION"
                 );
     }
 

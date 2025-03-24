@@ -14,6 +14,8 @@ class TransactionRiskAssessmentHttpEndpoint implements TransactionRiskAssessment
 
     @Override
     public TransactionRiskAssessmentResponse assessTransactionRisk(TransactionRiskAssessmentRequest request) {
+        TransactionRiskAssessmentHttpEndpointHelper.validateAmount(request.getAmount());
+
         var transactionDetails = TransactionRiskAssessmentHttpEndpointHelper.toTransactionDetails(request);
         var result = transactionRiskAssessmentService.assessTransactionRisk(transactionDetails);
 
