@@ -1,4 +1,4 @@
-package dev.b6k.fds.infrastructure;
+package dev.b6k.fds.infrastructure.exceptionmapper;
 
 import dev.b6k.fds.bin.integration.ExternalApiException;
 import dev.b6k.fds.model.ErrorResponse;

@@ -1,4 +1,4 @@
-package dev.b6k.fds.infrastructure;
+package dev.b6k.fds.infrastructure.exceptionmapper;
 
 import dev.b6k.fds.model.ErrorResponse;
 import dev.b6k.fds.model.ErrorResponseErrorsInner;
