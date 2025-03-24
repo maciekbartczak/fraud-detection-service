@@ -6,10 +6,7 @@ import dev.b6k.fds.bin.details.BinDetailsProvider;
 import dev.b6k.fds.bin.details.BinDetailsProvider.Result.Success;
 import dev.b6k.fds.model.GetBinDetailsResponse;
 import dev.b6k.fds.model.GetBinDetailsResponseIssuerCountry;
-import jakarta.validation.ValidationException;
 import lombok.experimental.UtilityClass;
-
-import java.math.BigDecimal;
 
 @UtilityClass
 class BinHttpEndpointHelper {
@@ -22,7 +19,7 @@ class BinHttpEndpointHelper {
 
     private static GetBinDetailsResponse makeGetBinDetailsResponse(BinDetails details) {
         return GetBinDetailsResponse.builder()
-                .bin(details.bin().asBigDecimal())
+                .bin(details.bin().value())
                 .issuerName(details.issuer().name())
                 .issuerCountry(GetBinDetailsResponseIssuerCountry.builder()
                         .code(details.issuer().country().code().value())

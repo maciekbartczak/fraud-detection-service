@@ -150,8 +150,9 @@ components:
       type: object
       properties:
         bin:
-          type: number
-          example: 966741
+          type: string
+          pattern: "^[0-9]{6,11}$"
+          example: "966741047"
           description: The Bank Identification Number
         issuerName:
           type: string
