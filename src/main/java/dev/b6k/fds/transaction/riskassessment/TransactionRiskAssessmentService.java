@@ -77,7 +77,7 @@ public class TransactionRiskAssessmentService {
     private TransactionEntity makeEntity(TransactionDetails transaction, int riskScore, RiskLevel riskLevel) {
         return TransactionEntity.builder()
                 .id(UUID.randomUUID())
-                .bin(transaction.bin().value().toString())
+                .bin(transaction.bin().value())
                 .amount(transaction.amount())
                 .currency(transaction.currency().code())
                 .countryCode(transaction.countryCode().value())

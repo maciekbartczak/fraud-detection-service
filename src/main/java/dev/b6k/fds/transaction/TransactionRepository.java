@@ -13,7 +13,7 @@ public class TransactionRepository implements PanacheRepository<TransactionEntit
     public TransactionsStatistics getTransactionsStatistics(Bin bin) {
         var result = getEntityManager()
                 .createQuery("select count(t), avg(t.amount) from TransactionEntity t where t.bin = :bin", Object[].class)
-                .setParameter("bin", bin.value().toString())
+                .setParameter("bin", bin.value())
                 .getSingleResult();
         var totalCount = ((Number) result[0]);
         var averageAmount = ((Double) result[1]);
