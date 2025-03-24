@@ -7,7 +7,6 @@ import dev.b6k.fds.WireMockExtension;
 import dev.b6k.fds.integration.mastercard.bin.model.BinResourceCountry;
 import dev.b6k.fds.model.*;
 import dev.b6k.fds.transaction.TransactionRepository;
-import io.quarkus.test.TestTransaction;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
@@ -52,9 +51,9 @@ class TransactionTransactionRiskAssessmentHttpEndpointTest extends BaseHttpEndpo
     @Test
     void assessRiskForTransactionWithoutRisks() {
         // given
-        var binNumber = "123456";
+        var bin = "123456";
 
-        MastercardBinApiStubHelper.prepareCustomServiceResponse(binNumber, response -> {
+        MastercardBinApiStubHelper.prepareCustomServiceResponse(bin, response -> {
             var country = new BinResourceCountry();
             country.setAlpha3("POL");
             country.setName("Poland");
@@ -64,14 +63,14 @@ class TransactionTransactionRiskAssessmentHttpEndpointTest extends BaseHttpEndpo
 
         // perform the first request now so that the second one won't be the first transaction
         callRiskAssessmentService(
-                getRiskAssessmentRequestBuilder(binNumber).build(),
+                getRiskAssessmentRequestBuilder(bin).build(),
                 200,
                 TransactionRiskAssessmentResponse.class
         );
 
         // when
         var response = callRiskAssessmentService(
-                getRiskAssessmentRequestBuilder(binNumber).build(),
+                getRiskAssessmentRequestBuilder(bin).build(),
                 200,
                 TransactionRiskAssessmentResponse.class
         );
@@ -86,8 +85,8 @@ class TransactionTransactionRiskAssessmentHttpEndpointTest extends BaseHttpEndpo
     @Test
     void assessRiskForLowRiskTransaction() {
         // given
-        var binNumber = "123456";
-        MastercardBinApiStubHelper.prepareCustomServiceResponse(binNumber, response -> {
+        var bin = "123456";
+        MastercardBinApiStubHelper.prepareCustomServiceResponse(bin, response -> {
             var country = new BinResourceCountry();
             country.setAlpha3("POL");
             country.setName("Poland");
@@ -95,7 +94,7 @@ class TransactionTransactionRiskAssessmentHttpEndpointTest extends BaseHttpEndpo
             response.setCountry(country);
         });
 
-        var request = getRiskAssessmentRequestBuilder(binNumber)
+        var request = getRiskAssessmentRequestBuilder(bin)
                 .build();
 
         // when
@@ -116,8 +115,8 @@ class TransactionTransactionRiskAssessmentHttpEndpointTest extends BaseHttpEndpo
     @Test
     void assessRiskForMediumRiskTransaction() {
         // given
-        var binNumber = "674523";
-        MastercardBinApiStubHelper.prepareCustomServiceResponse(binNumber, response -> {
+        var bin = "674523";
+        MastercardBinApiStubHelper.prepareCustomServiceResponse(bin, response -> {
             var country = new BinResourceCountry();
             country.setAlpha3("POL");
             country.setName("Poland");
@@ -126,7 +125,7 @@ class TransactionTransactionRiskAssessmentHttpEndpointTest extends BaseHttpEndpo
         });
 
         var request = TransactionRiskAssessmentRequest.builder()
-                .bin(new BigDecimal(binNumber))
+                .bin(bin)
                 .amount(new BigDecimal("100.00"))
                 .currency("PLN")
                 .location(TransactionRiskAssessmentRequestLocation.builder()
@@ -149,8 +148,8 @@ class TransactionTransactionRiskAssessmentHttpEndpointTest extends BaseHttpEndpo
     @Test
     void assessRiskForHighRiskTransaction() {
         // given
-        var binNumber = "557799";
-        MastercardBinApiStubHelper.prepareCustomServiceResponse(binNumber, response -> {
+        var bin = "557799";
+        MastercardBinApiStubHelper.prepareCustomServiceResponse(bin, response -> {
             var country = new BinResourceCountry();
             country.setAlpha3("RUS");
             country.setName("Russia");
@@ -160,13 +159,13 @@ class TransactionTransactionRiskAssessmentHttpEndpointTest extends BaseHttpEndpo
 
         // assess a few transactions first so that the usual amount will be possible to be calculated
         Stream.of("100.00", "200.00", "300.00", "400.00", "500.00")
-                .map(amount -> getRiskAssessmentRequestBuilder(binNumber)
+                .map(amount -> getRiskAssessmentRequestBuilder(bin)
                         .amount(new BigDecimal(amount))
                         .build())
                 .forEach(request -> callRiskAssessmentService(request, 200, TransactionRiskAssessmentResponse.class));
 
         var request = TransactionRiskAssessmentRequest.builder()
-                .bin(new BigDecimal(binNumber))
+                .bin(bin)
                 .amount(new BigDecimal("2500.00"))
                 .currency("RBL")
                 .location(TransactionRiskAssessmentRequestLocation.builder()
@@ -195,12 +194,12 @@ class TransactionTransactionRiskAssessmentHttpEndpointTest extends BaseHttpEndpo
     @Test
     void getErrorResponseWhenBinNotFound() {
         // given
-        var binNumber = "9999742";
-        MastercardBinApiStubHelper.prepareNoDataResponse(binNumber);
+        var bin = "9999742";
+        MastercardBinApiStubHelper.prepareNoDataResponse(bin);
 
         // when
         var response = callRiskAssessmentService(
-                getRiskAssessmentRequestBuilder(binNumber).build(),
+                getRiskAssessmentRequestBuilder(bin).build(),
                 404,
                 ErrorResponse.class
         );
@@ -218,12 +217,12 @@ class TransactionTransactionRiskAssessmentHttpEndpointTest extends BaseHttpEndpo
     @Test
     void getErrorResponseWhenApiFails() {
         // given
-        var binNumber = "9999743";
+        var bin = "9999743";
         MastercardBinApiStubHelper.prepareErrorResponse();
 
         // when
         var response = callRiskAssessmentService(
-                getRiskAssessmentRequestBuilder(binNumber).build(),
+                getRiskAssessmentRequestBuilder(bin).build(),
                 500,
                 ErrorResponse.class
         );
@@ -253,9 +252,9 @@ class TransactionTransactionRiskAssessmentHttpEndpointTest extends BaseHttpEndpo
                 .statusCode(401);
     }
 
-    private TransactionRiskAssessmentRequest.TransactionRiskAssessmentRequestBuilder<?, ?> getRiskAssessmentRequestBuilder(String binNumber) {
+    private TransactionRiskAssessmentRequest.TransactionRiskAssessmentRequestBuilder<?, ?> getRiskAssessmentRequestBuilder(String bin) {
         return TransactionRiskAssessmentRequest.builder()
-                .bin(new BigDecimal(binNumber))
+                .bin(bin)
                 .amount(new BigDecimal("13.74"))
                 .currency("PLN")
                 .location(TransactionRiskAssessmentRequestLocation.builder()

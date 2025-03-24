@@ -62,10 +62,10 @@ class BinHttpEndpointTest extends BaseHttpEndpointTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"12345", "123456789012", "123456.1"})
-    void validateBin(String invalidBinNumber) {
+    @ValueSource(strings = {"12345", "123456789012", "123456.1", "abcdef", "234a56", "1234,56"})
+    void validateBin(String invalidBin) {
         // given & when
-        var response = callGetBinDetailsService(invalidBinNumber, 400, ErrorResponse.class);
+        var response = callGetBinDetailsService(invalidBin, 400, ErrorResponse.class);
 
         // then
         assertThat(response.getErrors())
@@ -80,11 +80,11 @@ class BinHttpEndpointTest extends BaseHttpEndpointTest {
     @Test
     void returnErrorResponseWhenGettingNonExistingBinDetails() {
         // given
-        var binNumber = "654321";
-        MastercardBinApiStubHelper.prepareNoDataResponse(binNumber);
+        var bin = "654321";
+        MastercardBinApiStubHelper.prepareNoDataResponse(bin);
 
         // when
-        var response = callGetBinDetailsService(binNumber, 404, ErrorResponse.class);
+        var response = callGetBinDetailsService(bin, 404, ErrorResponse.class);
 
         // then
         assertThat(response.getErrors())
@@ -99,11 +99,11 @@ class BinHttpEndpointTest extends BaseHttpEndpointTest {
     @Test
     void setCorrectAuthorizationHeaderWhenCallingMastercardApi() {
         // given
-        var binNumber = "654321";
-        MastercardBinApiStubHelper.prepareSuccessResponse(binNumber);
+        var bin = "654321";
+        MastercardBinApiStubHelper.prepareSuccessResponse(bin);
 
         // when
-        callGetBinDetailsService(binNumber, 200, GetBinDetailsResponse.class);
+        callGetBinDetailsService(bin, 200, GetBinDetailsResponse.class);
 
         // then
         var requests = WireMockExtension.getWireMockServer()
@@ -164,12 +164,12 @@ class BinHttpEndpointTest extends BaseHttpEndpointTest {
         @Test
         void cacheBinDetailsOnSuccessfulResponse() {
             // given
-            var binNumber = "123456";
-            MastercardBinApiStubHelper.prepareSuccessResponse(binNumber);
+            var bin = "123456";
+            MastercardBinApiStubHelper.prepareSuccessResponse(bin);
 
             // when
-            callGetBinDetailsService(binNumber, 200, GetBinDetailsResponse.class);
-            callGetBinDetailsService(binNumber, 200, GetBinDetailsResponse.class);
+            callGetBinDetailsService(bin, 200, GetBinDetailsResponse.class);
+            callGetBinDetailsService(bin, 200, GetBinDetailsResponse.class);
 
             // then
             WireMockExtension.getWireMockServer().verify(1, postRequestedFor(urlEqualTo("/bin-ranges/account-searches")));
@@ -178,12 +178,12 @@ class BinHttpEndpointTest extends BaseHttpEndpointTest {
         @Test
         void cacheNonExistingBinDetailsResponse() {
             // given
-            var binNumber = "55555567";
-            MastercardBinApiStubHelper.prepareNoDataResponse(binNumber);
+            var bin = "55555567";
+            MastercardBinApiStubHelper.prepareNoDataResponse(bin);
 
             // when
-            callGetBinDetailsService(binNumber, 404, ErrorResponse.class);
-            callGetBinDetailsService(binNumber, 404, ErrorResponse.class);
+            callGetBinDetailsService(bin, 404, ErrorResponse.class);
+            callGetBinDetailsService(bin, 404, ErrorResponse.class);
 
             // then
             WireMockExtension.getWireMockServer().verify(1, postRequestedFor(urlEqualTo("/bin-ranges/account-searches")));
@@ -197,11 +197,11 @@ class BinHttpEndpointTest extends BaseHttpEndpointTest {
                             .willReturn(aResponse()
                                     .withStatus(500))
                     );
-            var binNumber = "123456";
+            var bin = "123456";
 
             // when
-            callGetBinDetailsService(binNumber, 500, ErrorResponse.class);
-            callGetBinDetailsService(binNumber, 500, ErrorResponse.class);
+            callGetBinDetailsService(bin, 500, ErrorResponse.class);
+            callGetBinDetailsService(bin, 500, ErrorResponse.class);
 
             // then
             WireMockExtension.getWireMockServer().verify(2, postRequestedFor(urlEqualTo("/bin-ranges/account-searches")));

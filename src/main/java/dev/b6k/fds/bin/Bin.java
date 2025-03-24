@@ -1,33 +1,19 @@
 package dev.b6k.fds.bin;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Objects;
 
-public record Bin(BigInteger value) {
+public record Bin(String value) {
     public Bin {
-        Objects.requireNonNull(value, "Bin number cannot be null");
+        Objects.requireNonNull(value, "Bin cannot be null");
 
-        var length = value.toString().length();
-        if (length < 6 || length > 11) {
-            throw new IllegalArgumentException("Bin number must be between 6 and 11 digits long");
+        if (!value.matches("^\\d{6,11}$")) {
+            throw new IllegalArgumentException("Bin must be a number with 6 to 11 digits");
         }
     }
 
-    public static Bin of(String binNumber) {
-        try {
-            return new Bin(new BigInteger(binNumber));
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid bin number", e);
-        }
-    }
-
-    public static Bin of(BigDecimal bin) {
-        if (bin.stripTrailingZeros().scale() > 0) {
-            throw new IllegalArgumentException("Bin number must be an integer without decimal places");
-        }
-
-        return new Bin(bin.toBigInteger());
+    public static Bin of(String bin) {
+        return new Bin(bin);
     }
 
     public BigDecimal asBigDecimal() {

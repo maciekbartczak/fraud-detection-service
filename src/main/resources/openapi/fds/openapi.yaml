@@ -27,7 +27,7 @@ paths:
                 $ref: "#/components/schemas/TransactionRiskAssessmentResponse"
           description: Risk assessment data returned successfully
 
-  /api/v1/bin/{binNumber}:
+  /api/v1/bin/{bin}:
     get:
       tags:
         - bin
@@ -36,14 +36,13 @@ paths:
       security:
         - jwt: [ ]
       parameters:
-        - name: binNumber
+        - name: bin
           in: path
           required: true
           schema:
-            type: number
-            minimum: 100000
-            maximum: 99999999999
-            example: 966741047
+            type: string
+            pattern: "^[0-9]{6,11}$"
+            example: "966741047"
           description: The Bank Identification Number
       responses:
         '200':
@@ -77,10 +76,9 @@ components:
       type: object
       properties:
         bin:
-          type: number
-          minimum: 100000
-          maximum: 99999999999
-          example: 966741047
+          type: string
+          pattern: "^[0-9]{6,11}$"
+          example: "966741047"
           description: The Bank Identification Number associated with the transaction
         amount:
           type: number

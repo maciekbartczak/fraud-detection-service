@@ -50,10 +50,4 @@ class BinHttpEndpointHelper {
             case CORPORATE -> GetBinDetailsResponse.ConsumerTypeEnum.CORPORATE;
         };
     }
-
-    public static void validateBin(BigDecimal bin) {
-        if (bin.stripTrailingZeros().scale() > 0) {
-            throw new ValidationException("Bin number must be an integer without decimal places");
-        }
-    }
 }
