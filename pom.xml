@@ -20,6 +20,7 @@
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
         <openapi-generator-plugin.version>7.12.0</openapi-generator-plugin.version>
         <build-helper-plugin.version>3.3.0</build-helper-plugin.version>
+        <resource-plugin.version>3.3.1</resource-plugin.version>
 
         <oauth1-signer.version>1.5.3</oauth1-signer.version>
         <lombok.version>1.18.36</lombok.version>
@@ -272,6 +273,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
+                <version>${resource-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>copy-openapi-schema</id>
