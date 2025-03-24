@@ -34,7 +34,7 @@ The following BINs can be used to test the Mastercard API:
 - 932860
 - 777305770
 
-### Running the application
+### Running the application locally
 
 #### Prerequisites
 - Java 21

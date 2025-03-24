@@ -258,8 +258,34 @@
                         <configuration>
                             <sources>
                                 <source>${project.build.directory}/generated-sources/fds-api/src/gen/java</source>
-                                <source>${project.build.directory}/generated-sources/mastercard-bin-api/src/gen/java</source>
+                                <source>${project.build.directory}/generated-sources/mastercard-bin-api/src/gen/java
+                                </source>
                             </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-openapi-schema</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/classes/META-INF</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources/openapi/fds</directory>
+                                    <includes>
+                                        <include>openapi.yaml</include>
+                                    </includes>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>

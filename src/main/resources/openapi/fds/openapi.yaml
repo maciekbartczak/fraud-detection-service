@@ -26,6 +26,18 @@ paths:
               schema:
                 $ref: "#/components/schemas/TransactionRiskAssessmentResponse"
           description: Risk assessment data returned successfully
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Invalid request format
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: The requested BIN was not found and the risk assessment could not be performed
 
   /api/v1/bin/{bin}:
     get:
