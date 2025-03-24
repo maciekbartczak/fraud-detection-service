@@ -17,6 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.UUID;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -111,6 +113,33 @@ class BinHttpEndpointTest {
                 .startsWith("OAuth")
                 .contains("oauth_consumer_key=\"mock-api-key\"")
                 .containsPattern("oauth_signature=.*");
+    }
+
+    @Test
+    void propagateRequestIdToMastercardApi() {
+        // given
+        var requestId = UUID.randomUUID().toString();
+        var bin = "123456";
+        MastercardBinApiStubHelper.prepareSuccessResponse(bin);
+
+        // when
+        given()
+                .pathParam("bin", bin)
+                .header("X-Request-ID", requestId)
+
+                .when()
+                .get("/api/v1/bin/{bin}")
+
+                .then()
+                .statusCode(200);
+
+        // then
+        var requests = WireMockExtension.getWireMockServer()
+                .findAll(postRequestedFor(urlEqualTo("/bin-ranges/account-searches")));
+        assertThat(requests).hasSize(1);
+
+        var requestIdHeader = requests.getFirst().getHeader("X-Request-ID");
+        assertEquals(requestId, requestIdHeader);
     }
 
     @Nested
