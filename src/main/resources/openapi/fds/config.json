@@ -1,6 +1,6 @@
 {
   "library": "quarkus",
-  "sourceFolder": "src/gen/java/main",
+  "sourceFolder": "src/gen/main/java/",
   "groupId" : "dev.b6k.fds",
   "artifactId" : "fds-api",
   "invokerPackage" : "dev.b6k.fds",
