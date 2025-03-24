@@ -11,6 +11,8 @@ paths:
         - transaction/risk-assessment
       description: Assess the risk of a single transaction
       operationId: assessTransactionRisk
+      security:
+        - jwt: []
       requestBody:
         required: true
         content:
@@ -30,6 +32,9 @@ paths:
       tags:
         - bin
       operationId: getBinDetails
+      description: Fetch the bin details
+      security:
+        - jwt: []
       parameters:
         - name: binNumber
           in: path
@@ -61,6 +66,12 @@ paths:
           description: The requested BIN was not found
 
 components:
+  securitySchemes:
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token for authentication
   schemas:
     TransactionRiskAssessmentRequest:
       type: object

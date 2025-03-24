@@ -4,8 +4,10 @@ import dev.b6k.fds.model.TransactionRiskAssessmentRequest;
 import dev.b6k.fds.model.TransactionRiskAssessmentResponse;
 import dev.b6k.fds.rest.TransactionRiskAssessmentApi;
 import dev.b6k.fds.transaction.riskassessment.TransactionRiskAssessmentService;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
 
+@RolesAllowed("api")
 @RequiredArgsConstructor
 class TransactionRiskAssessmentHttpEndpoint implements TransactionRiskAssessmentApi {
     private final TransactionRiskAssessmentService transactionRiskAssessmentService;

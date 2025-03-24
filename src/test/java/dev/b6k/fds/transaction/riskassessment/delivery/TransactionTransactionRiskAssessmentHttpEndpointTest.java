@@ -1,5 +1,6 @@
 package dev.b6k.fds.transaction.riskassessment.delivery;
 
+import dev.b6k.fds.BaseHttpEndpointTest;
 import dev.b6k.fds.MastercardBinApiStubHelper;
 import dev.b6k.fds.MastercardBinApiTestProfile;
 import dev.b6k.fds.WireMockExtension;
@@ -10,6 +11,9 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 import java.util.stream.Stream;
@@ -22,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @QuarkusTestResource(WireMockExtension.class)
 @TestProfile(MastercardBinApiTestProfile.class)
 // TODO: load custom weights, thresholds and scores for assertions
-public class TransactionTransactionRiskAssessmentHttpEndpointTest {
+class TransactionTransactionRiskAssessmentHttpEndpointTest extends BaseHttpEndpointTest {
     @BeforeEach
     void setup() {
         WireMockExtension.getWireMockServer().resetAll();
@@ -215,6 +219,21 @@ public class TransactionTransactionRiskAssessmentHttpEndpointTest {
                     assertEquals("EXTERNAL_API_ERROR", error.getCode());
                     assertEquals("Failed to retrieve BIN details from Mastercard API", error.getMessage());
                 });
+    }
+
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"invalid-jwt-token"})
+    void returnUnauthorizedErrorWhenInvalidAuthorizationHeader(String jwt) {
+        given()
+                .contentType("application/json")
+                .header("Authorization", jwt)
+
+                .when()
+                .post("/api/v1/transaction/risk-assessment")
+
+                .then()
+                .statusCode(401);
     }
 
     private TransactionRiskAssessmentRequest.TransactionRiskAssessmentRequestBuilder<?, ?> getRiskAssessmentRequestBuilder(String binNumber) {

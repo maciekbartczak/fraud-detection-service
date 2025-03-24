@@ -1,5 +1,6 @@
 package dev.b6k.fds.infrastructure;
 
+import dev.b6k.fds.BaseHttpEndpointTest;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +9,7 @@ import static org.hamcrest.Matchers.*;
 
 @QuarkusTest
 
-public class RequestIdTest {
+class RequestIdTest extends BaseHttpEndpointTest {
 
     @Test
     void generateRequestIdWhenHeaderIsNotProvided() {

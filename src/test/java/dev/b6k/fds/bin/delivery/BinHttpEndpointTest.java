@@ -1,5 +1,6 @@
 package dev.b6k.fds.bin.delivery;
 
+import dev.b6k.fds.BaseHttpEndpointTest;
 import dev.b6k.fds.MastercardBinApiStubHelper;
 import dev.b6k.fds.MastercardBinApiTestProfile;
 import dev.b6k.fds.WireMockExtension;
@@ -11,10 +12,12 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.ext.Provider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.UUID;
@@ -27,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @QuarkusTest
 @QuarkusTestResource(WireMockExtension.class)
 @TestProfile(MastercardBinApiTestProfile.class)
-class BinHttpEndpointTest {
+class BinHttpEndpointTest extends BaseHttpEndpointTest {
     @Inject
     @CacheName("bin-details-cache")
     Cache binDetailsCache;
@@ -140,6 +143,20 @@ class BinHttpEndpointTest {
 
         var requestIdHeader = requests.getFirst().getHeader("X-Request-ID");
         assertEquals(requestId, requestIdHeader);
+    }
+
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"invalid-jwt-token"})
+    void returnUnauthorizedErrorWhenInvalidAuthorizationHeader(String jwt) {
+        given()
+                .header("Authorization", jwt)
+
+                .when()
+                .get("/api/v1/bin/123456")
+
+                .then()
+                .statusCode(401);
     }
 
     @Nested
