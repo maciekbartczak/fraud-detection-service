@@ -6,9 +6,13 @@ import dev.b6k.fds.MastercardBinApiTestProfile;
 import dev.b6k.fds.WireMockExtension;
 import dev.b6k.fds.integration.mastercard.bin.model.BinResourceCountry;
 import dev.b6k.fds.model.*;
+import dev.b6k.fds.transaction.TransactionRepository;
+import io.quarkus.test.TestTransaction;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,9 +30,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @QuarkusTestResource(WireMockExtension.class)
 @TestProfile(MastercardBinApiTestProfile.class)
 class TransactionTransactionRiskAssessmentHttpEndpointTest extends BaseHttpEndpointTest {
+    @Inject
+    TransactionRepository transactionRepository;
+
     @BeforeEach
     void setup() {
         WireMockExtension.getWireMockServer().resetAll();
+        cleanDatabase();
+    }
+
+    // Clean the database before each test to avoid problems when running the tests in continuous testing mode
+    // Note on why this has to be done in such way: https://stackoverflow.com/a/72743861
+    // Moreover we can't just execute deleteAll() because it would not cascade to the related entities
+    @Transactional
+    void cleanDatabase() {
+        transactionRepository.findAll()
+                .stream()
+                .forEach(transactionRepository::delete);
     }
 
     @Test

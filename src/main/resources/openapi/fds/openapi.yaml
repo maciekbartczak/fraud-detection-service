@@ -8,11 +8,11 @@ paths:
   /api/v1/transaction/risk-assessment:
     post:
       tags:
-        - transaction/risk-assessment
+        - transaction-risk-assessment
       description: Assess the risk of a single transaction
       operationId: assessTransactionRisk
       security:
-        - jwt: []
+        - jwt: [ ]
       requestBody:
         required: true
         content:
@@ -34,7 +34,7 @@ paths:
       operationId: getBinDetails
       description: Fetch the bin details
       security:
-        - jwt: []
+        - jwt: [ ]
       parameters:
         - name: binNumber
           in: path
@@ -100,7 +100,7 @@ components:
               type: string
               example: "POL"
               pattern: "^[A-Z]{3}$"
-              description: The country code of the transaction location in ISO 3166-1 alfa-3 format
+              description: The country code of the transaction location in ISO 3166-1 alpha-3 format
           required:
             - countryCode
       required:
@@ -145,6 +145,7 @@ components:
               - factorDescription
       required:
         - riskScore
+        - riskLevel
         - riskFactors
 
     GetBinDetailsResponse:
@@ -199,11 +200,11 @@ components:
           description: Flag indicating whether the card may be used outside of the issuingCountry of issuance.
       required:
         - bin
-        - customerName
-        - consumerType
+        - issuerName
+        - issuerCountry
         - billingCurrency
         - fundingSource
-        - accountHolderType
+        - consumerType
         - localUse
 
     ErrorResponse:

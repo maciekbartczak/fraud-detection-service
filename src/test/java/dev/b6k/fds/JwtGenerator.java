@@ -1,16 +1,12 @@
 package dev.b6k.fds;
 
 import io.smallrye.jwt.build.Jwt;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.Instant;
 
 public class JwtGenerator {
-    @Test
-    @Disabled
-    void printToken() {
+    public static void main(String[] args) {
         System.out.println(generateToken());
     }
 
