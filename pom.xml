@@ -257,8 +257,11 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.build.directory}/generated-sources/fds-api/src/gen/java</source>
-                                <source>${project.build.directory}/generated-sources/mastercard-bin-api/src/gen/java
+                                <source>
+                                    ${project.build.directory}/generated-sources/fds-api/src/gen/main/java
+                                </source>
+                                <source>
+                                    ${project.build.directory}/generated-sources/mastercard-bin-api/src/gen/main/java
                                 </source>
                             </sources>
                         </configuration>
