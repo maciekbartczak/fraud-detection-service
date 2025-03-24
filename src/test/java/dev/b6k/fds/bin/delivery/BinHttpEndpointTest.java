@@ -1,4 +1,4 @@
-package dev.b6k.fds.bin;
+package dev.b6k.fds.bin.delivery;
 
 import dev.b6k.fds.MastercardBinApiStubHelper;
 import dev.b6k.fds.MastercardBinApiTestProfile;

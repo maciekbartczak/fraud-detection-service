@@ -26,21 +26,12 @@ class BinDetailsBasedRiskFactorEvaluatorTest {
     private static final int HIGH_RISK_COUNTRY_RISK_SCORE = 75;
     private static final Set<String> HIGH_RISK_COUNTRIES = Set.of("RUS", "BLR");
 
-    private static final BinDetails.BinDetailsBuilder NO_RISK_BIN_DETAILS_BUILDER = BinDetails.builder()
-            .issuer(new BinDetails.Issuer(
-                    "Bank",
-                    new BinDetails.Country(CountryCode.of("POL"), "Poland")
-            ))
-            .billingCurrency(Currency.of("PLN"))
-            .fundingSource(BinDetails.FundingSource.CREDIT)
-            .accountHolderType(BinDetails.AccountHolderType.CONSUMER)
-            .domesticUseOnly(false);
-
     @Test
     void returnPrepaidCardRiskFactor() {
         // given
         var binDetailsProvider = mock(BinDetailsProvider.class);
         var binDetails = BinDetails.builder()
+                .bin(Bin.of("123456"))
                 .issuer(new BinDetails.Issuer(
                         "Bank",
                         new BinDetails.Country(CountryCode.of("POL"), "Poland")
@@ -90,6 +81,7 @@ class BinDetailsBasedRiskFactorEvaluatorTest {
         // given
         var binDetailsProvider = mock(BinDetailsProvider.class);
         var binDetails = BinDetails.builder()
+                .bin(Bin.of("123456"))
                 .issuer(new BinDetails.Issuer(
                         "Bank",
                         new BinDetails.Country(CountryCode.of("POL"), "Poland")
@@ -142,6 +134,7 @@ class BinDetailsBasedRiskFactorEvaluatorTest {
         // given
         var binDetailsProvider = mock(BinDetailsProvider.class);
         var binDetails = BinDetails.builder()
+                .bin(Bin.of("123456"))
                 .issuer(new BinDetails.Issuer(
                         "Bank",
                         new BinDetails.Country(CountryCode.of("RUS"), "Russia")
@@ -194,6 +187,7 @@ class BinDetailsBasedRiskFactorEvaluatorTest {
         // given
         var binDetailsProvider = mock(BinDetailsProvider.class);
         var binDetails = BinDetails.builder()
+                .bin(Bin.of("123456"))
                 .issuer(new BinDetails.Issuer(
                         "Bank",
                         new BinDetails.Country(CountryCode.of("POL"), "Poland")

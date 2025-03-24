@@ -1,4 +1,4 @@
-package dev.b6k.fds.riskassessment;
+package dev.b6k.fds.transaction.riskassessment.delivery;
 
 import dev.b6k.fds.MastercardBinApiStubHelper;
 import dev.b6k.fds.MastercardBinApiTestProfile;

@@ -16,6 +16,13 @@ public record BinDetails(
         AccountHolderType accountHolderType,
         boolean domesticUseOnly
 ) {
+    public BinDetails {
+        Objects.requireNonNull(bin, "Bin must not be null");
+        Objects.requireNonNull(issuer, "Issuer must not be null");
+        Objects.requireNonNull(billingCurrency, "Billing currency must not be null");
+        Objects.requireNonNull(fundingSource, "Funding source must not be null");
+        Objects.requireNonNull(accountHolderType, "Account holder type must not be null");
+    }
     public record Country(CountryCode code, String name) {
         public Country {
             Objects.requireNonNull(code, "Country code must not be null");

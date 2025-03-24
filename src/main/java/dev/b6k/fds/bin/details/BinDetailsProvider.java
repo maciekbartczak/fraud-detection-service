@@ -10,4 +10,3 @@ public interface BinDetailsProvider {
         record NoData(String reason) implements Result {}
     }
 }
-

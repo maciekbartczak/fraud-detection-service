@@ -102,7 +102,7 @@ class TransactionsStatisticsBasedRiskFactorEvaluatorTest {
     }
 
     @Test
-    void shouldReturnNoRiskFactorsWhenTransactionAmountWithinThreshold() {
+    void returnNoRiskFactorsWhenTransactionAmountWithinThreshold() {
         // given
         var averageAmount = BigDecimal.valueOf(100);
         var transactionRepository = mock(TransactionRepository.class);

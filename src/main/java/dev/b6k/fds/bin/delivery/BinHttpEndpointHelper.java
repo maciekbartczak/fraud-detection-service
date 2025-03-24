@@ -6,7 +6,10 @@ import dev.b6k.fds.bin.details.BinDetailsProvider;
 import dev.b6k.fds.bin.details.BinDetailsProvider.Result.Success;
 import dev.b6k.fds.model.GetBinDetailsResponse;
 import dev.b6k.fds.model.GetBinDetailsResponseIssuerCountry;
+import jakarta.validation.ValidationException;
 import lombok.experimental.UtilityClass;
+
+import java.math.BigDecimal;
 
 @UtilityClass
 class BinHttpEndpointHelper {
@@ -46,5 +49,11 @@ class BinHttpEndpointHelper {
             case CONSUMER -> GetBinDetailsResponse.ConsumerTypeEnum.CONSUMER;
             case CORPORATE -> GetBinDetailsResponse.ConsumerTypeEnum.CORPORATE;
         };
+    }
+
+    public static void validateBin(BigDecimal bin) {
+        if (bin.stripTrailingZeros().scale() > 0) {
+            throw new ValidationException("Bin number must be an integer without decimal places");
+        }
     }
 }

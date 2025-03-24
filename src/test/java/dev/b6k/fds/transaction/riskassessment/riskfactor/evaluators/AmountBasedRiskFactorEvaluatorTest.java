@@ -26,7 +26,7 @@ class AmountBasedRiskFactorEvaluatorTest {
     }
 
     @Test
-    void addHighTransactionAmountRiskWhenAmountExceedsThreshold() {
+    void returnHighTransactionAmountRiskWhenAmountExceedsThreshold() {
         // given
         var transactionDetails = TransactionDetails.builder()
                 .bin(Bin.of("123456"))
@@ -54,7 +54,7 @@ class AmountBasedRiskFactorEvaluatorTest {
     }
 
     @Test
-    void addRoundAmountRiskWhenAmountExceedsThreshold() {
+    void returnRoundAmountRiskWhenAmountExceedsThreshold() {
         // given
         var transactionDetails = TransactionDetails.builder()
                 .bin(Bin.of("123456"))
@@ -82,7 +82,7 @@ class AmountBasedRiskFactorEvaluatorTest {
     }
 
     @Test
-    void addBothRiskFactors() {
+    void returnBothRiskFactors() {
         // given
         var transactionDetails = TransactionDetails.builder()
                 .bin(Bin.of("123456"))
@@ -102,7 +102,7 @@ class AmountBasedRiskFactorEvaluatorTest {
     }
 
     @Test
-    void doNotAddAnyRiskFactor() {
+    void doNotReturnAnyRiskFactors() {
         // given
         var transactionDetails = TransactionDetails.builder()
                 .bin(Bin.of("123456"))

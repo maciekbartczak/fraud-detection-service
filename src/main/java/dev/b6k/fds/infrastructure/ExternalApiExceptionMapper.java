@@ -1,8 +1,8 @@
-package dev.b6k.fds.configuration;
+package dev.b6k.fds.infrastructure;
 
+import dev.b6k.fds.bin.integration.ExternalApiException;
 import dev.b6k.fds.model.ErrorResponse;
 import dev.b6k.fds.model.ErrorResponseErrorsInner;
-import jakarta.validation.ValidationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
@@ -10,17 +10,17 @@ import jakarta.ws.rs.ext.Provider;
 import java.util.List;
 
 @Provider
-public class ValidationExceptionMapper implements ExceptionMapper<ValidationException> {
+class ExternalApiExceptionMapper implements ExceptionMapper<ExternalApiException> {
     @Override
-    public Response toResponse(ValidationException e) {
+    public Response toResponse(ExternalApiException e) {
         var errorResponse = ErrorResponse.builder()
                 .errors(List.of(
                         ErrorResponseErrorsInner.builder()
-                                .code("VALIDATION_ERROR")
+                                .code("EXTERNAL_API_ERROR")
                                 .message(e.getMessage())
                                 .build()
                 )).build();
 
-        return Response.status(Response.Status.BAD_REQUEST).entity(errorResponse).build();
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorResponse).build();
     }
 }
