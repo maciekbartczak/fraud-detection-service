@@ -8,13 +8,11 @@ import io.quarkus.arc.properties.IfBuildProperty;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Singleton;
-import jakarta.ws.rs.client.ClientRequestContext;
 import jakarta.ws.rs.client.ClientRequestFilter;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
 
-import java.io.IOException;
 import java.net.URI;
 import java.security.PrivateKey;
 
@@ -37,9 +35,9 @@ class MastercardApiClientConfiguration {
         return RestClientBuilder.newBuilder()
                 .baseUri(URI.create(baseUrl))
                 .register(authorizationFilter)
-                .register((ClientRequestFilter) requestContext -> {
-                    requestContext.getHeaders().add("X-Request-Id", RequestIdUtil.getCurrentRequestId());
-                })
+                .register((ClientRequestFilter) requestContext ->
+                        requestContext.getHeaders().add("X-Request-Id", RequestIdUtil.getCurrentRequestId())
+                )
                 .build(BinLookupApi.class);
     }
 

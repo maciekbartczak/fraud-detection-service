@@ -4,6 +4,8 @@ import dev.b6k.fds.CountryCode;
 import dev.b6k.fds.bin.BinNotFoundException;
 import dev.b6k.fds.bin.details.BinDetails;
 import dev.b6k.fds.bin.details.BinDetailsProvider;
+import dev.b6k.fds.bin.details.BinDetailsProvider.Result.NoData;
+import dev.b6k.fds.bin.details.BinDetailsProvider.Result.Success;
 import dev.b6k.fds.transaction.TransactionDetails;
 import dev.b6k.fds.transaction.riskassessment.Score;
 import dev.b6k.fds.transaction.riskassessment.riskfactor.RiskFactor;
@@ -51,8 +53,8 @@ class BinDetailsBasedRiskFactorEvaluator implements RiskFactorEvaluator {
     public Set<RiskFactor> evaluate(TransactionDetails transaction) {
         var riskFactors = new HashSet<RiskFactor>();
         var binDetails = switch (binDetailsProvider.getBinDetails(transaction.bin())) {
-            case BinDetailsProvider.Result.Success success -> success.details();
-            case BinDetailsProvider.Result.NoData noData -> throw new BinNotFoundException(noData.reason());
+            case Success(BinDetails details) -> details;
+            case NoData(String reason) -> throw new BinNotFoundException(reason);
         };
 
         if (binDetails.fundingSource() == BinDetails.FundingSource.PREPAID) {

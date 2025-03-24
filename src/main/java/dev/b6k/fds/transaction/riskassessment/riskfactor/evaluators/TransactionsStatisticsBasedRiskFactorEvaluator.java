@@ -45,12 +45,12 @@ class TransactionsStatisticsBasedRiskFactorEvaluator implements RiskFactorEvalua
         var pastTransactionsStatistics = transactionRepository.getTransactionsStatistics(transaction.bin());
 
         return switch (pastTransactionsStatistics) {
-            case NoTransactions noTransactions -> Set.of(makeFirstTransactionRiskFactor(transaction));
+            case NoTransactions() -> Set.of(makeFirstTransactionRiskFactor());
             case WithTransactions withTransactions -> evaluateTransactionStatistics(transaction, withTransactions);
         };
     }
 
-    private RiskFactor makeFirstTransactionRiskFactor(TransactionDetails transaction) {
+    private RiskFactor makeFirstTransactionRiskFactor() {
         return RiskFactor.builder()
                 .score(firstTransactionRiskScore)
                 .weight(weight)

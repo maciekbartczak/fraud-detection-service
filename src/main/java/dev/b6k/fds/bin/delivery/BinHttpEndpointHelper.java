@@ -3,6 +3,7 @@ package dev.b6k.fds.bin.delivery;
 import dev.b6k.fds.bin.BinNotFoundException;
 import dev.b6k.fds.bin.details.BinDetails;
 import dev.b6k.fds.bin.details.BinDetailsProvider;
+import dev.b6k.fds.bin.details.BinDetailsProvider.Result.NoData;
 import dev.b6k.fds.bin.details.BinDetailsProvider.Result.Success;
 import dev.b6k.fds.model.GetBinDetailsResponse;
 import dev.b6k.fds.model.GetBinDetailsResponseIssuerCountry;
@@ -12,8 +13,8 @@ import lombok.experimental.UtilityClass;
 class BinHttpEndpointHelper {
     public static GetBinDetailsResponse toResponse(BinDetailsProvider.Result result) {
         return switch (result) {
-            case Success success -> makeGetBinDetailsResponse(success.details());
-            case BinDetailsProvider.Result.NoData noData -> throw new BinNotFoundException(noData.reason());
+            case Success(BinDetails details) -> makeGetBinDetailsResponse(details);
+            case NoData(String reason) -> throw new BinNotFoundException(reason);
         };
     }
 

@@ -7,8 +7,6 @@ import dev.b6k.fds.rest.BinApi;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
 
-import java.math.BigDecimal;
-
 @RolesAllowed("api")
 @RequiredArgsConstructor
 class BinHttpEndpoint implements BinApi {
