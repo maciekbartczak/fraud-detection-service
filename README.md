@@ -37,6 +37,7 @@ The following BINs can be used to test the Mastercard API:
 ### Running the application
 
 The application can be run in two ways:
+
 - Run `mvn generate-sources` to generate the OpenAPI client and run the application using IntellJ
 - Run `mvn quarkus:dev`
 
@@ -46,7 +47,8 @@ Swagger UI is available at `http://localhost:8080/swagger-ui`
 
 In order to keep the application simple and reduce the scope of the task the following trade-offs were made:
 
-1. The BIN details domain object represents only a subset of the data returned by the Mastercard API.
+1. The BIN details domain object represents only a subset of the data returned by the Mastercard API. Additionally, it
+   is assumed that the Mastercard API always returns all the required data.
 2. The risk evaluation is based only on few simple factors, however the code enables easy extension of the evaluation
    logic.
 3. Only a subset of the data stored on the database is used for the risk evaluation.
