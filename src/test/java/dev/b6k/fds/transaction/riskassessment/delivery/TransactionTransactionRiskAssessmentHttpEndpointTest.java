@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @QuarkusTest
 @QuarkusTestResource(WireMockExtension.class)
 @TestProfile(MastercardBinApiTestProfile.class)
-// TODO: load custom weights, thresholds and scores for assertions
 class TransactionTransactionRiskAssessmentHttpEndpointTest extends BaseHttpEndpointTest {
     @BeforeEach
     void setup() {
