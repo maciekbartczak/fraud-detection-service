@@ -7,15 +7,25 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <compiler-plugin.version>3.13.0</compiler-plugin.version>
-        <maven.compiler.release>21</maven.compiler.release>
+        <skipITs>true</skipITs>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
         <quarkus.platform.version>3.15.4</quarkus.platform.version>
-        <skipITs>true</skipITs>
+
+        <maven.compiler.release>21</maven.compiler.release>
+
         <surefire-plugin.version>3.3.1</surefire-plugin.version>
+        <compiler-plugin.version>3.13.0</compiler-plugin.version>
+        <openapi-generator-plugin.version>7.12.0</openapi-generator-plugin.version>
+        <build-helper-plugin.version>3.3.0</build-helper-plugin.version>
+
+        <oauth1-signer.version>1.5.3</oauth1-signer.version>
+        <lombok.version>1.18.36</lombok.version>
+        <assertj.version>3.11.1</assertj.version>
+        <wiremock.version>3.12.1</wiremock.version>
+        <mockito.version>5.16.1</mockito.version>
     </properties>
 
     <dependencyManagement>
@@ -98,12 +108,12 @@
         <dependency>
             <groupId>com.mastercard.developer</groupId>
             <artifactId>oauth1-signer</artifactId>
-            <version>1.5.3</version>
+            <version>${oauth1-signer.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.36</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -121,19 +131,19 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.11.1</version>
+            <version>${assertj.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock</artifactId>
             <scope>test</scope>
-            <version>3.12.1</version>
+            <version>${wiremock.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.16.1</version>
+            <version>${mockito.version}</version>
         </dependency>
     </dependencies>
 
@@ -196,7 +206,7 @@
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>7.12.0</version>
+                <version>${openapi-generator-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>generate-fds-endpoints</id>
@@ -237,10 +247,10 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>${build-helper-plugin.version}</version>
                 <executions>
                     <execution>
-                        <id>add-source</id>
+                        <id>add-generated-api-sources</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>add-source</goal>
