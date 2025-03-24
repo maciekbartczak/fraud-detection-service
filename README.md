@@ -36,6 +36,10 @@ The following BINs can be used to test the Mastercard API:
 
 ### Running the application
 
+#### Prerequisites
+- Java 21
+- Maven 3.9.0 or later
+
 The application can be run in two ways:
 
 - Run `mvn generate-sources` to generate the OpenAPI client and run the application using IntellJ
