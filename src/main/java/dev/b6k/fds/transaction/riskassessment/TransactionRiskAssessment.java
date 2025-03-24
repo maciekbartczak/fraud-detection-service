@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.Objects;
 
 @Builder
-public record TransactionRiskAssessment(Score score, List<RiskFactor.Description> riskFactorDescriptions) {
+public record TransactionRiskAssessment(Score score, RiskLevel riskLevel, List<RiskFactor.Description> riskFactorDescriptions) {
     public TransactionRiskAssessment {
         Objects.requireNonNull(score, "Score cannot be null");
+        Objects.requireNonNull(riskLevel, "Level cannot be null");
         Objects.requireNonNull(riskFactorDescriptions, "Risk factor descriptions cannot be null");
     }
 }

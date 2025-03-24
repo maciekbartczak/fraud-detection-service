@@ -2,8 +2,8 @@ package dev.b6k.fds.transaction.riskassessment.riskfactor.evaluators;
 
 import dev.b6k.fds.transaction.TransactionDetails;
 import dev.b6k.fds.transaction.TransactionRepository;
-import dev.b6k.fds.transaction.TransactionRepository.TransactionStatistics.NoTransactions;
-import dev.b6k.fds.transaction.TransactionRepository.TransactionStatistics.WithTransactions;
+import dev.b6k.fds.transaction.TransactionRepository.TransactionsStatistics.NoTransactions;
+import dev.b6k.fds.transaction.TransactionRepository.TransactionsStatistics.WithTransactions;
 import dev.b6k.fds.transaction.riskassessment.Score;
 import dev.b6k.fds.transaction.riskassessment.riskfactor.RiskFactor;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -63,7 +63,7 @@ class TransactionsStatisticsBasedRiskFactorEvaluator implements RiskFactorEvalua
 
     private Set<RiskFactor> evaluateTransactionStatistics(
             TransactionDetails transaction,
-            TransactionRepository.TransactionStatistics.WithTransactions statistics
+            TransactionRepository.TransactionsStatistics.WithTransactions statistics
     ) {
         var riskFactors = new HashSet<RiskFactor>();
 

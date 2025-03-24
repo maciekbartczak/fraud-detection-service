@@ -5,8 +5,8 @@ import dev.b6k.fds.Currency;
 import dev.b6k.fds.bin.Bin;
 import dev.b6k.fds.transaction.TransactionDetails;
 import dev.b6k.fds.transaction.TransactionRepository;
-import dev.b6k.fds.transaction.TransactionRepository.TransactionStatistics.NoTransactions;
-import dev.b6k.fds.transaction.TransactionRepository.TransactionStatistics.WithTransactions;
+import dev.b6k.fds.transaction.TransactionRepository.TransactionsStatistics.NoTransactions;
+import dev.b6k.fds.transaction.TransactionRepository.TransactionsStatistics.WithTransactions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

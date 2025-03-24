@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @ApplicationScoped
 public class TransactionRepository implements PanacheRepository<TransactionEntity> {
-    public TransactionStatistics getTransactionsStatistics(Bin bin) {
+    public TransactionsStatistics getTransactionsStatistics(Bin bin) {
         var result = getEntityManager()
                 .createQuery("select count(t), avg(t.amount) from TransactionEntity t where t.bin = :bin", Object[].class)
                 .setParameter("bin", bin.value().toString())
@@ -19,10 +19,10 @@ public class TransactionRepository implements PanacheRepository<TransactionEntit
         var averageAmount = ((Double) result[1]);
 
         if (totalCount.intValue() == 0) {
-            return new TransactionStatistics.NoTransactions();
+            return new TransactionsStatistics.NoTransactions();
         }
 
-        return new TransactionStatistics.WithTransactions(
+        return new TransactionsStatistics.WithTransactions(
                 totalCount.intValue(),
                 Optional.ofNullable(averageAmount)
                         .map(it -> BigDecimal.valueOf(it).setScale(2, RoundingMode.HALF_UP))
@@ -30,11 +30,11 @@ public class TransactionRepository implements PanacheRepository<TransactionEntit
         );
     }
 
-    public sealed interface TransactionStatistics {
-        public record NoTransactions() implements TransactionStatistics {
+    public sealed interface TransactionsStatistics {
+        record NoTransactions() implements TransactionsStatistics {
         }
 
-        public record WithTransactions(int totalCount, BigDecimal averageAmount) implements TransactionStatistics {
+        record WithTransactions(int totalCount, BigDecimal averageAmount) implements TransactionsStatistics {
         }
     }
 }

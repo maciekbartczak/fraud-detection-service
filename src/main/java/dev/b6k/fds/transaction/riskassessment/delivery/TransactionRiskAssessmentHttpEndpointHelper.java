@@ -7,7 +7,7 @@ import dev.b6k.fds.model.TransactionRiskAssessmentRequest;
 import dev.b6k.fds.model.TransactionRiskAssessmentResponse;
 import dev.b6k.fds.model.TransactionRiskAssessmentResponseRiskFactorsInner;
 import dev.b6k.fds.transaction.TransactionDetails;
-import dev.b6k.fds.transaction.riskassessment.Score;
+import dev.b6k.fds.transaction.riskassessment.RiskLevel;
 import dev.b6k.fds.transaction.riskassessment.TransactionRiskAssessment;
 import lombok.experimental.UtilityClass;
 
@@ -15,10 +15,6 @@ import java.util.stream.Collectors;
 
 @UtilityClass
 class TransactionRiskAssessmentHttpEndpointHelper {
-    // TODO: load this from configuration, possibly move to AssessmentService
-    private static final int LOW_RISK_THRESHOLD = 30;
-    private static final int MEDIUM_RISK_THRESHOLD = 60;
-
     static TransactionDetails toTransactionDetails(TransactionRiskAssessmentRequest request) {
         return TransactionDetails.builder()
                 .bin(Bin.of(request.getBin()))
@@ -31,7 +27,7 @@ class TransactionRiskAssessmentHttpEndpointHelper {
     static TransactionRiskAssessmentResponse toResponse(TransactionRiskAssessment result) {
         return TransactionRiskAssessmentResponse.builder()
                 .riskScore(result.score().value())
-                .riskLevel(getRiskLevel(result.score()))
+                .riskLevel(getRiskLevel(result.riskLevel()))
                 .riskFactors(result.riskFactorDescriptions().stream()
                         .map(it -> TransactionRiskAssessmentResponseRiskFactorsInner.builder()
                                 .factorName(it.code())
@@ -41,17 +37,11 @@ class TransactionRiskAssessmentHttpEndpointHelper {
                 .build();
     }
 
-    private static TransactionRiskAssessmentResponse.RiskLevelEnum getRiskLevel(Score score) {
-        var scoreValue = score.value();
-
-        if (scoreValue < LOW_RISK_THRESHOLD) {
-            return TransactionRiskAssessmentResponse.RiskLevelEnum.LOW;
-        }
-
-        if (scoreValue < MEDIUM_RISK_THRESHOLD) {
-            return TransactionRiskAssessmentResponse.RiskLevelEnum.MEDIUM;
-        }
-
-        return TransactionRiskAssessmentResponse.RiskLevelEnum.HIGH;
+    private static TransactionRiskAssessmentResponse.RiskLevelEnum getRiskLevel(RiskLevel riskLevel) {
+        return switch (riskLevel) {
+            case LOW -> TransactionRiskAssessmentResponse.RiskLevelEnum.LOW;
+            case MEDIUM -> TransactionRiskAssessmentResponse.RiskLevelEnum.MEDIUM;
+            case HIGH -> TransactionRiskAssessmentResponse.RiskLevelEnum.HIGH;
+        };
     }
 }

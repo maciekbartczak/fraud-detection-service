@@ -1,6 +1,7 @@
 package dev.b6k.fds.transaction;
 
 
+import dev.b6k.fds.transaction.riskassessment.RiskLevel;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,6 +36,10 @@ public class TransactionEntity {
 
     @Column(name = "RISK_SCORE")
     private int riskScore;
+
+    @Column(name = "RISK_LEVEL")
+    @Enumerated(EnumType.STRING)
+    private RiskLevel riskLevel;
 
     @Column(name = "TIMESTAMP")
     private LocalDateTime timestamp;
