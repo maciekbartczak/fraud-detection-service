@@ -19,6 +19,7 @@ import java.util.UUID;
 public class RiskFactorEntity {
     @Id
     @Column(name = "ID")
+    @Builder.Default
     @EqualsAndHashCode.Include
     private UUID id = UUID.randomUUID();
 
