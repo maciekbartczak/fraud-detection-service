@@ -1,7 +1,8 @@
 {
   "library": "microprofile",
   "sourceFolder": "src/gen/java/main",
-  "groupId" : "dev.b6k.fds",
+  "groupId" : "dev.b6k.fds.integration",
+  "artifactId" : "mastercard-bin-api",
   "invokerPackage" : "dev.b6k.fds.integration.mastercard.bin",
   "apiPackage" : "dev.b6k.fds.integration.mastercard.bin.api",
   "modelPackage" : "dev.b6k.fds.integration.mastercard.bin.model",

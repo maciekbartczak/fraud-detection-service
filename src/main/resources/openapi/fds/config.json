@@ -2,6 +2,7 @@
   "library": "quarkus",
   "sourceFolder": "src/gen/java/main",
   "groupId" : "dev.b6k.fds",
+  "artifactId" : "fds-api",
   "invokerPackage" : "dev.b6k.fds",
   "apiPackage": "dev.b6k.fds.rest",
   "modelPackage": "dev.b6k.fds.model",
