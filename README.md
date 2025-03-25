@@ -47,6 +47,9 @@ The application can be run in two ways:
 
 Swagger UI is available at `http://localhost:8080/swagger-ui`
 
+#### Generating JWT
+A sample valid JWT can be generated using the `JwtGenerator` class located in test sources.
+
 ## Trade-offs
 
 In order to keep the application simple and reduce the scope of the task the following trade-offs were made:
